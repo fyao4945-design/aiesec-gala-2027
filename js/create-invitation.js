@@ -160,14 +160,17 @@
             correctLevel: QRCode.CorrectLevel.H
         });
     }
+function getVerificationURL(token) {
+    const baseURL =
+        "https://fyao4945-design.github.io/aiesec-gala-2027/";
 
-    function getVerificationURL(token) {
-        const url = new URL("verify.html", window.location.href);
+    const url = new URL("verify.html", baseURL);
 
-        url.searchParams.set("token", token);
+    url.searchParams.set("token", token);
 
-        return url.toString();
-    }
+    return url.toString();
+}
+
 
     async function createInvitation(event) {
         event.preventDefault();
