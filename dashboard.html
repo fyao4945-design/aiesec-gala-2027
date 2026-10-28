@@ -1,9 +1,139 @@
-<!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tableau de bord | AIESEC Gala 2027</title><link rel="stylesheet" href="css/style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/config.js"></script><script src="js/dashboard.js" defer></script></head>
-<body class="dashboard-page"><aside class="sidebar"><a class="brand" href="index.html"><img src="assets/logo-aiesec.png" alt="AIESEC"><span>GALA <b>2027</b></span></a><p class="sidebar-label">MENU PRINCIPAL</p><a class="side-link active" href="dashboard.html">▦ &nbsp; Tableau de bord</a><a class="side-link" href="#" aria-disabled="true">♧ &nbsp; Invitations <small>Bientôt</small></a><a class="side-link" href="#" aria-disabled="true">▣ &nbsp; Scanner QR <small>Bientôt</small></a><div class="sidebar-bottom"><a href="index.html" class="side-link">← Voir le site public</a><button id="logout-button" class="side-link logout">↪ &nbsp; Déconnexion</button></div></aside>
-<main class="dash-content"><p class="eyebrow">AIESEC · GALA 2027</p><h1>Tableau de bord</h1><p class="muted">Bienvenue dans l’espace de gestion du dîner de gala.</p><div id="dashboard-message" class="notice">Vérification de votre session…</div>
-<section class="stats-grid"><article class="stat-card"><span>Invitations créées</span><strong>—</strong><small>Statistiques à connecter</small></article><article class="stat-card"><span>Entrées validées</span><strong>—</strong><small>Contrôle QR à configurer</small></article><article class="stat-card"><span>Invitations restantes</span><strong>—</strong><small>Calcul après connexion des données</small></article></section>
-<section class="content-card"><div class="card-heading"><div><p class="eyebrow">PROCHAINES ÉTAPES</p><h2>Préparation de la plateforme</h2></div><span class="status-pill">Phase 1</span></div><ol class="steps"><li><span>1</span><div><b>Connexion administrateur</b><p>Vérifier la session et le rôle dans Supabase.</p></div></li><li><span>2</span><div><b>Gestion des invitations</b><p>Créer, consulter et désactiver les invitations.</p></div></li><li><span>3</span><div><b>QR code et contrôle d’entrée</b><p>Vérifier chaque code côté serveur et empêcher les doublons.</p></div></li></ol></section>
-</main></body></html>
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+```
+<title>Tableau de bord | AIESEC Gala 2027</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/dashboard.js" defer></script>
+```
+
+</head>
+
+<body class="dashboard-page">
+
+```
+<aside class="sidebar">
+
+    <a class="brand" href="index.html">
+        <img src="assets/logo-aiesec.png" alt="AIESEC">
+        <span>GALA <b>2027</b></span>
+    </a>
+
+    <p class="sidebar-label">MENU PRINCIPAL</p>
+
+    <a class="side-link active" href="dashboard.html">
+        ▦ &nbsp; Tableau de bord
+    </a>
+
+    <a class="side-link" href="create-invitation.html">
+        ♧ &nbsp; Invitations
+    </a>
+
+    <a class="side-link" href="scanner.html">
+        ▣ &nbsp; Scanner QR
+    </a>
+
+    <div class="sidebar-bottom">
+
+        <a href="index.html" class="side-link">
+            ← Voir le site public
+        </a>
+
+        <button id="logout-button" class="side-link logout">
+            ↪ &nbsp; Déconnexion
+        </button>
+
+    </div>
+
+</aside>
+
+<main class="dash-content">
+
+    <p class="eyebrow">AIESEC · GALA 2027</p>
+
+    <h1>Tableau de bord</h1>
+
+    <p class="muted">
+        Bienvenue dans l’espace de gestion du dîner de gala.
+    </p>
+
+    <div id="dashboard-message" class="notice">
+        Vérification de votre session…
+    </div>
+
+    <section class="stats-grid">
+
+        <article class="stat-card">
+            <span>Invitations créées</span>
+            <strong>—</strong>
+            <small>Statistiques à connecter</small>
+        </article>
+
+        <article class="stat-card">
+            <span>Entrées validées</span>
+            <strong>—</strong>
+            <small>Contrôle QR à configurer</small>
+        </article>
+
+        <article class="stat-card">
+            <span>Invitations restantes</span>
+            <strong>—</strong>
+            <small>Calcul après connexion des données</small>
+        </article>
+
+    </section>
+
+    <section class="content-card">
+
+        <div class="card-heading">
+            <div>
+                <p class="eyebrow">PROCHAINES ÉTAPES</p>
+                <h2>Préparation de la plateforme</h2>
+            </div>
+
+            <span class="status-pill">Phase 1</span>
+        </div>
+
+        <ol class="steps">
+
+            <li>
+                <span>1</span>
+                <div>
+                    <b>Connexion administrateur</b>
+                    <p>Vérifier la session et le rôle dans Supabase.</p>
+                </div>
+            </li>
+
+            <li>
+                <span>2</span>
+                <div>
+                    <b>Gestion des invitations</b>
+                    <p>Créer, consulter et désactiver les invitations.</p>
+                </div>
+            </li>
+
+            <li>
+                <span>3</span>
+                <div>
+                    <b>QR code et contrôle d’entrée</b>
+                    <p>Vérifier chaque code côté serveur et empêcher les doublons.</p>
+                </div>
+            </li>
+
+        </ol>
+
+    </section>
+
+</main>
+```
+
+</body>
+</html>
