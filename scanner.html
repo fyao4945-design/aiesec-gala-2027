@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0878D1">
+
+    <title>Contrôle des invitations | AIESEC 2027</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/scanner.css">
+
+    <script src="https://unpkg.com/html5-qrcode" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/config.js" defer></script>
+    <script src="js/scanner.js" defer></script>
+</head>
+
+<body class="scanner-page">
+    <main class="container">
+        <header class="page-header">
+            <h1>Dîner de Gala AIESEC 2027</h1>
+            <p>Contrôle des invitations</p>
+        </header>
+
+        <section class="card" id="access-section">
+            <h2>Accès organisateur</h2>
+
+            <p>
+                Saisissez le code commun communiqué par
+                l'administrateur pour accéder au scanner.
+            </p>
+
+            <form id="access-form">
+                <label for="scanner-code">Code organisateur</label>
+
+                <input
+                    type="password"
+                    id="scanner-code"
+                    autocomplete="current-password"
+                    required
+                    placeholder="Entrez votre code"
+                >
+
+                <button type="submit" id="access-button">
+                    Accéder au scanner
+                </button>
+            </form>
+
+            <p id="access-message" role="alert"></p>
+        </section>
+
+        <section class="card" id="scanner-section" hidden>
+            <h2>Scanner une invitation</h2>
+
+            <p>
+                Placez le QR code de l'invité devant la caméra.
+            </p>
+
+            <div id="qr-reader"></div>
+
+            <button type="button" id="stop-scanner" hidden>
+                Arrêter le scanner
+            </button>
+
+            <p id="scanner-message" role="status" aria-live="polite">
+                En attente du démarrage du scanner.
+            </p>
+
+            <div id="scan-result" aria-live="assertive"></div>
+
+            <button type="button" id="logout-button">
+                Fermer la session
+            </button>
+        </section>
+
+        <footer>
+            <p>AIESEC — Dîner de Gala 2027</p>
+        </footer>
+    </main>
+</body>
+</html>

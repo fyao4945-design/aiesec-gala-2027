@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Créer une invitation | AIESEC Gala 2027</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .creation-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .creation-header {
+            margin-bottom: 30px;
+        }
+
+        .creation-header h1 {
+            color: #10243e;
+            font-size: 32px;
+        }
+
+        .creation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .creation-form,
+        .preview-panel {
+            padding: 28px;
+            background: white;
+            border: 1px solid #dce7f3;
+            border-radius: 14px;
+        }
+
+        .creation-form h2,
+        .preview-panel h2 {
+            margin-top: 0;
+            color: #10243e;
+        }
+
+        .creation-form label {
+            display: block;
+            margin: 17px 0 7px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .creation-form input,
+        .creation-form select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dce7f3;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .creation-form input:focus,
+        .creation-form select:focus {
+            outline: 2px solid #0878df;
+            outline-offset: 1px;
+        }
+
+        .field-help {
+            color: #718096;
+            font-size: 12px;
+        }
+
+        .preview-card {
+            margin-top: 20px;
+            padding: 25px;
+            border: 2px solid #0878df;
+            border-radius: 14px;
+            background: linear-gradient(
+                145deg,
+                #ffffff,
+                #eef6ff
+            );
+        }
+
+        .preview-logo {
+            display: block;
+            max-width: 140px;
+            max-height: 65px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .preview-card h3 {
+            color: #0878df;
+            font-size: 24px;
+        }
+
+        .preview-name {
+            color: #10243e;
+            font-size: 22px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .preview-qr {
+            min-height: 120px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .preview-qr img,
+        .preview-qr canvas {
+            max-width: 150px;
+        }
+
+        .preview-note {
+            color: #718096;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .message-box {
+            display: none;
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .message-error {
+            display: block;
+            color: #9b1c1c;
+            background: #fff0f0;
+        }
+
+        .message-success {
+            display: block;
+            color: #166534;
+            background: #effcf3;
+        }
+
+        .creation-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .creation-actions .button {
+            flex: 1;
+        }
+
+        @media (max-width: 800px) {
+            .creation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .creation-container {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <a href="dashboard.html" class="brand">
+        <img src="assets/logo-aiesec.png"
+             alt="Logo AIESEC">
+
+        <span>AIESEC <b>GALA 2027</b></span>
+    </a>
+
+    <a href="dashboard.html"
+       class="button button-outline">
+        Retour au tableau de bord
+    </a>
+
+</header>
+
+<main class="creation-container">
+
+    <div class="creation-header">
+
+        <p class="eyebrow">
+            ESPACE D'ORGANISATION
+        </p>
+
+        <h1>Créer une invitation</h1>
+
+        <p class="muted">
+            Enregistre un invité et prépare sa carte
+            officielle pour le Dîner de Gala AIESEC 2027.
+        </p>
+
+    </div>
+
+    <div class="creation-grid">
+
+        <section class="creation-form">
+
+            <h2>Informations de l'invité</h2>
+
+            <form id="invitation-form">
+
+                <label for="last_name">
+                    Nom *
+                </label>
+
+                <input
+                    id="last_name"
+                    name="last_name"
+                    type="text"
+                    maxlength="100"
+                    autocomplete="family-name"
+                    required
+                >
+
+                <label for="first_names">
+                    Prénoms *
+                </label>
+
+                <input
+                    id="first_names"
+                    name="first_names"
+                    type="text"
+                    maxlength="150"
+                    autocomplete="given-name"
+                    required
+                >
+
+                <label for="guest_type">
+                    Catégorie de l'invité *
+                </label>
+
+                <select
+                    id="guest_type"
+                    name="guest_type"
+                    required
+                >
+                    <option value="">
+                        Sélectionner une catégorie
+                    </option>
+
+                    <option value="Membre">
+                        Membre
+                    </option>
+
+                    <option value="Partenaire">
+                        Partenaire
+                    </option>
+
+                    <option value="Invité externe">
+                        Invité externe
+                    </option>
+
+                </select>
+
+                <label for="organization">
+                    Organisation
+                </label>
+
+                <input
+                    id="organization"
+                    name="organization"
+                    type="text"
+                    maxlength="150"
+                    placeholder="Ex. : AIESEC, entreprise..."
+                >
+
+                <label for="job_title">
+                    Fonction
+                </label>
+
+                <input
+                    id="job_title"
+                    name="job_title"
+                    type="text"
+                    maxlength="150"
+                    placeholder="Ex. : Responsable informatique"
+                >
+
+                <label for="phone">
+                    Téléphone
+                </label>
+
+                <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    maxlength="30"
+                    autocomplete="tel"
+                    placeholder="Numéro de téléphone"
+                >
+
+                <label for="email">
+                    Adresse e-mail
+                </label>
+
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    maxlength="254"
+                    autocomplete="email"
+                    placeholder="invite@example.com"
+                >
+
+                <p class="field-help">
+                    Les champs marqués d'un astérisque sont obligatoires.
+                </p>
+
+                <button
+                    id="create-button"
+                    class="button button-full"
+                    type="submit"
+                >
+                    Créer l'invitation
+                </button>
+
+                <div
+                    id="form-message"
+                    class="message-box"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+            </form>
+
+        </section>
+
+        <section class="preview-panel">
+
+            <h2>Aperçu de la carte</h2>
+
+            <p class="muted">
+                La carte sera générée après l'enregistrement
+                de l'invitation.
+            </p>
+
+            <div id="invitation-card" class="preview-card">
+
+                <img
+                    class="preview-logo"
+                    src="assets/logo-aiesec.png"
+                    alt="Logo AIESEC"
+                    crossorigin="anonymous"
+                >
+
+                <p class="eyebrow">
+                    AIESEC PRÉSENTE
+                </p>
+
+                <h3>Dîner de Gala 2027</h3>
+
+                <p>
+                    Invitation officielle
+                </p>
+
+                <div
+                    id="preview-name"
+                    class="preview-name"
+                >
+                    Nom de l'invité
+                </div>
+
+                <p id="preview-category">
+                    Catégorie de l'invité
+                </p>
+
+                <div class="ticket-rule"></div>
+
+                <div id="preview-qr" class="preview-qr">
+                    <span class="muted">
+                        QR code généré après validation
+                    </span>
+                </div>
+
+                <p id="preview-number"
+                   class="preview-note">
+                    Numéro d'invitation en attente
+                </p>
+
+                <p class="preview-note">
+                    Une invitation = une personne.
+                </p>
+
+            </div>
+
+            <div class="creation-actions">
+
+                <button
+                    id="download-button"
+                    class="button"
+                    type="button"
+                    disabled
+                >
+                    Télécharger en PNG
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+<footer>
+    <span>AIESEC — Dîner de Gala 2027</span>
+    <span>Invitation individuelle</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script src="js/config.js"></script>
+
+<script src="js/create-invitation.js"></script>
+
+</body>
+</html>
+

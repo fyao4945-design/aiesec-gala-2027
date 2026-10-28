@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion | AIESEC Gala 2027</title><link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/config.js"></script><script src="js/auth.js" defer></script></head>
+<body class="auth-page"><a class="back-link" href="index.html">← Retour à l’accueil</a>
+<main class="auth-layout">
+  <section class="auth-art"><a class="brand brand-light" href="index.html"><img src="assets/logo-aiesec.png" alt="Logo AIESEC"><span>GALA <b>2027</b></span></a><div><p class="eyebrow">ESPACE SÉCURISÉ</p><h1>Le gala se prépare ici.</h1><p>Gérez les invitations et préparez l’accueil des invités depuis un espace réservé à l’équipe organisatrice.</p></div><small>AIESEC · Dîner de Gala 2027</small></section>
+  <section class="auth-panel"><p class="eyebrow">ESPACE ORGANISATEURS</p><h2>Connexion</h2><p class="muted">Connectez-vous avec le compte Supabase qui vous a été attribué.</p>
+    <form id="login-form"><label for="email">Adresse e-mail</label><input id="email" name="email" type="email" autocomplete="username" required placeholder="nom@exemple.com">
+    <label for="password">Mot de passe</label><input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Votre mot de passe">
+    <button class="button button-full" type="submit" id="login-button">Se connecter <span>→</span></button><p id="login-message" class="form-message" role="status" aria-live="polite"></p></form>
+    <p class="security-note">L’accès est réservé aux comptes autorisés. Si vous ne pouvez pas vous connecter, contactez l’administrateur du gala.</p>
+  </section>
+</main></body></html>

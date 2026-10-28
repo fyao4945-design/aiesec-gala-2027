@@ -1,0 +1,396 @@
+/* ==================================================
+   AIESEC 2027 — INTERFACE DE CONTRÔLE DES INVITATIONS
+   ================================================== */
+
+.scanner-page {
+    --scanner-blue: #0878d1;
+    --scanner-blue-dark: #07569a;
+    --scanner-blue-light: #eaf5ff;
+    --scanner-white: #ffffff;
+    --scanner-text: #18324b;
+    --scanner-muted: #718096;
+    --scanner-border: #e2eaf2;
+    --scanner-green: #16803c;
+    --scanner-red: #c62828;
+
+    min-height: 100vh;
+    margin: 0;
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(8, 120, 209, 0.12),
+            transparent 35%
+        ),
+        #f4f8fc;
+    color: var(--scanner-text);
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.scanner-page *,
+.scanner-page *::before,
+.scanner-page *::after {
+    box-sizing: border-box;
+}
+
+.scanner-page [hidden] {
+    display: none !important;
+}
+
+/* Conteneur principal */
+
+.scanner-page .container {
+    width: min(100% - 32px, 760px);
+    margin: 0 auto;
+    padding: 32px 0;
+}
+
+/* En-tête */
+
+.scanner-page .page-header {
+    position: relative;
+    overflow: hidden;
+    padding: 34px 24px;
+    margin-bottom: 28px;
+    border-radius: 24px;
+    background: linear-gradient(
+        135deg,
+        var(--scanner-blue),
+        var(--scanner-blue-dark)
+    );
+    color: white;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(7, 86, 154, 0.18);
+}
+
+.scanner-page .page-header::before {
+    content: "";
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    top: -100px;
+    right: -50px;
+    border: 25px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+.scanner-page .page-header h1 {
+    position: relative;
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    line-height: 1.3;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.scanner-page .page-header p {
+    position: relative;
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+}
+
+/* Cartes */
+
+.scanner-page .card {
+    padding: clamp(22px, 5vw, 36px);
+    margin-bottom: 24px;
+    background: var(--scanner-white);
+    border: 1px solid var(--scanner-border);
+    border-radius: 22px;
+    box-shadow: 0 8px 28px rgba(24, 50, 75, 0.06);
+}
+
+.scanner-page .card h2 {
+    margin: 0 0 12px;
+    color: var(--scanner-text);
+    font-size: clamp(1.3rem, 3vw, 1.65rem);
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+.scanner-page .card > p {
+    color: var(--scanner-muted);
+    margin: 0 0 24px;
+}
+
+/* Formulaire d'accès */
+
+.scanner-page #access-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.scanner-page #access-form label {
+    color: var(--scanner-text);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.scanner-page input[type="password"] {
+    display: block;
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 16px;
+    border: 1.5px solid #d4dfeb;
+    border-radius: 12px;
+    background: #fbfdff;
+    color: var(--scanner-text);
+    font: inherit;
+    font-size: 1rem;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+.scanner-page input[type="password"]:focus {
+    outline: none;
+    border-color: var(--scanner-blue);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(8, 120, 209, 0.12);
+}
+
+.scanner-page input::placeholder {
+    color: #9aa8b8;
+}
+
+/* Boutons */
+
+.scanner-page button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 52px;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 12px;
+    background: var(--scanner-blue);
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 750;
+    cursor: pointer;
+    transition:
+        background 0.2s,
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.scanner-page button:hover:not(:disabled) {
+    background: var(--scanner-blue-dark);
+    box-shadow: 0 6px 16px rgba(8, 120, 209, 0.2);
+}
+
+.scanner-page button:active:not(:disabled) {
+    transform: scale(0.985);
+}
+
+.scanner-page button:focus-visible {
+    outline: 3px solid rgba(8, 120, 209, 0.35);
+    outline-offset: 3px;
+}
+
+.scanner-page button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Bouton de fermeture de session */
+
+.scanner-page #logout-button {
+    margin-top: 22px;
+    background: #eef5fb;
+    color: var(--scanner-blue-dark);
+    border: 1px solid #dbe8f5;
+}
+
+.scanner-page #logout-button:hover:not(:disabled) {
+    background: #dfeefa;
+    box-shadow: none;
+}
+
+/* Bouton d'arrêt du scanner */
+
+.scanner-page #stop-scanner {
+    margin-top: 16px;
+    background: #eaf1f8;
+    color: #294760;
+    border: 1px solid #d7e2ee;
+}
+
+.scanner-page #stop-scanner:hover:not(:disabled) {
+    background: #dce8f3;
+    box-shadow: none;
+}
+
+/* Messages */
+
+.scanner-page #access-message,
+.scanner-page #scanner-message {
+    padding: 12px 14px;
+    margin: 16px 0 0;
+    border-radius: 10px;
+    font-size: 0.94rem;
+    overflow-wrap: anywhere;
+}
+
+.scanner-page #access-message:empty,
+.scanner-page #scanner-message:empty {
+    display: none;
+}
+
+.scanner-page #access-message:not(:empty) {
+    background: #fff6e5;
+    color: #8a5200;
+    border: 1px solid #f2dfb5;
+}
+
+.scanner-page #scanner-message:not(:empty) {
+    background: var(--scanner-blue-light);
+    color: var(--scanner-blue-dark);
+    border: 1px solid #d2e9ff;
+}
+
+/* Zone de lecture QR */
+
+.scanner-page #qr-reader {
+    width: 100%;
+    max-width: 440px;
+    margin: 24px auto;
+    padding: 12px;
+    overflow: hidden;
+    border: 1px solid var(--scanner-border);
+    border-radius: 18px;
+    background: #f8fbff;
+}
+
+/* Éléments internes générés par html5-qrcode */
+
+.scanner-page #qr-reader video {
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.scanner-page #qr-reader img {
+    max-width: 100%;
+}
+
+.scanner-page #qr-reader button {
+    width: auto;
+    max-width: 100%;
+    min-height: 42px;
+    margin: 8px auto;
+    padding: 10px 16px;
+    font-size: 0.92rem;
+}
+
+.scanner-page #qr-reader select {
+    max-width: 100%;
+    min-height: 42px;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border: 1px solid #d4dfeb;
+    border-radius: 8px;
+    background: white;
+    color: var(--scanner-text);
+    font: inherit;
+}
+
+/* Résultats de contrôle */
+
+.scanner-page #scan-result {
+    margin-top: 22px;
+    overflow-wrap: anywhere;
+}
+
+.scanner-page #scan-result:empty {
+    display: none;
+}
+
+.scanner-page #scan-result:not(:empty) {
+    padding: 20px;
+    border: 1px solid var(--scanner-border);
+    border-radius: 16px;
+    background: #fbfdff;
+}
+
+.scanner-page #scan-result h3 {
+    margin: 0 0 16px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.scanner-page #scan-result p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 10px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid #e9eff5;
+    color: var(--scanner-text);
+    font-size: 0.96rem;
+}
+
+/* Pied de page */
+
+.scanner-page footer {
+    padding: 12px 0 4px;
+    text-align: center;
+    color: var(--scanner-muted);
+    font-size: 0.9rem;
+}
+
+.scanner-page footer p {
+    margin: 0;
+}
+
+/* Tablettes et petits écrans */
+
+@media (max-width: 600px) {
+    .scanner-page .container {
+        width: min(100% - 22px, 760px);
+        padding: 16px 0 24px;
+    }
+
+    .scanner-page .page-header {
+        padding: 28px 18px;
+        margin-bottom: 18px;
+        border-radius: 18px;
+    }
+
+    .scanner-page .card {
+        padding: 22px 18px;
+        margin-bottom: 18px;
+        border-radius: 18px;
+    }
+
+    .scanner-page #qr-reader {
+        padding: 6px;
+        margin: 20px auto;
+    }
+
+    .scanner-page #scan-result:not(:empty) {
+        padding: 16px;
+    }
+
+    .scanner-page button {
+        min-height: 54px;
+    }
+}
+
+/* Réduction des animations si demandée par l'utilisateur */
+
+@media (prefers-reduced-motion: reduce) {
+    .scanner-page *,
+    .scanner-page *::before,
+    .scanner-page *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vérification d'invitation | AIESEC 2027</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .verification-container {
+            max-width: 550px;
+            margin: 60px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .verification-container h1 {
+            color: #10243e;
+            margin-bottom: 15px;
+        }
+
+        .verification-container p {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .verification-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .verification-notice {
+            margin-top: 25px;
+            padding: 15px;
+            background: #eef4fb;
+            border-radius: 8px;
+            color: #10243e;
+        }
+
+        .verification-warning {
+            color: #a32626;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="verification-container">
+        <div class="verification-icon">🎟️</div>
+
+        <h1>Dîner de Gala AIESEC 2027</h1>
+
+        <p>
+            Bienvenue sur la page de vérification des invitations.
+        </p>
+
+        <div id="verification-message" class="verification-notice">
+            Vérification du lien en cours...
+        </div>
+
+        <p>
+            <small>
+                La validation définitive de l'invitation est effectuée
+                par les organisateurs à l'entrée du gala.
+            </small>
+        </p>
+    </main>
+
+    <script>
+        (function () {
+            const message = document.getElementById(
+                "verification-message"
+            );
+
+            const params = new URLSearchParams(
+                window.location.search
+            );
+
+            const token = params.get("token");
+
+            if (!token) {
+                message.textContent =
+                    "Aucun jeton d'invitation n'a été fourni.";
+
+                message.classList.add("verification-warning");
+                return;
+            }
+
+            if (!/^[a-fA-F0-9]{64}$/.test(token)) {
+                message.textContent =
+                    "Le lien d'invitation est invalide.";
+
+                message.classList.add("verification-warning");
+                return;
+            }
+
+            message.textContent =
+                "Le lien contient un jeton d'invitation valide au format attendu. " +
+                "Présentez cette invitation aux organisateurs pour son contrôle.";
+        })();
+    </script>
+</body>
+</html>
