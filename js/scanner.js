@@ -168,33 +168,61 @@
                 }
             },
             async (decodedText) => {
-                const token = decodedText.trim();
-                const now = Date.now();
+    const contenu = decodedText.trim();
+    let token = contenu;
 
-                if (
-                    processing ||
-                    (
-                        token === lastToken &&
-                        now - lastScanTime < 3000
-                    )
-                ) {
-                    return;
-                }
+    // Si le QR code contient une URL, extraire son paramètre token.
+    try {
+        const url = new URL(contenu);
 
-                lastToken = token;
-                lastScanTime = now;
+        token =
+            url.searchParams.get("token") ||
+            url.searchParams.get("t") ||
+            "";
 
-                // Le QR code doit contenir un jeton hexadécimal de 64 caractères.
-                if (!/^[a-fA-F0-9]{64}$/.test(token)) {
-                    displayResult(
-                        "invalid",
-                        "QR code non reconnu."
-                    );
-                    return;
-                }
+        // Prendre également en charge un jeton placé dans le fragment.
+        if (!token && url.hash) {
+            const fragment = new URLSearchParams(
+                url.hash.slice(1)
+            );
 
-                await validateToken(token);
-            },
+            token =
+                fragment.get("token") ||
+                fragment.get("t") ||
+                "";
+        }
+    } catch {
+        // Le contenu n'est pas une URL : il peut s'agir du jeton brut.
+    }
+
+    token = token.trim();
+
+    const now = Date.now();
+
+    if (
+        processing ||
+        (
+            token === lastToken &&
+            now - lastScanTime < 3000
+        )
+    ) {
+        return;
+    }
+
+    lastToken = token;
+    lastScanTime = now;
+
+    // Le jeton doit contenir exactement 64 caractères hexadécimaux.
+    if (!/^[a-fA-F0-9]{64}$/.test(token)) {
+        displayResult(
+            "invalid",
+            "QR code non reconnu : jeton absent ou format incorrect."
+        );
+        return;
+    }
+
+    await validateToken(token);
+},
             () => {
                 // Les erreurs de lecture ponctuelles sont normales.
             }
