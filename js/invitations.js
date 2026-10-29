@@ -4,6 +4,7 @@
 const message = document.getElementById("page-message");
 const tableBody = document.getElementById("invitations-body");
 const searchInput = document.getElementById("search-input");
+const statusFilter = document.getElementById("statusFilter");
 const refreshButton = document.getElementById("refresh-button");
 const resultsCount = document.getElementById("results-count");
 const logoutButton = document.getElementById("logout-button");
@@ -48,10 +49,12 @@ function addCell(row, value) {
 
 function renderInvitations() {
     const query = searchInput.value.trim().toLocaleLowerCase("fr");
+    const selectedStatus = statusFilter.value;
 
     const filtered = invitations.filter((invitation) => {
         const guest = invitation.guests || {};
 
+        // Recherche par numéro, nom, prénom ou organisation
         const searchable = [
             invitation.invitation_number,
             guest.last_name,
@@ -62,7 +65,14 @@ function renderInvitations() {
             .join(" ")
             .toLocaleLowerCase("fr");
 
-        return searchable.includes(query);
+        const matchesSearch = searchable.includes(query);
+
+        // Filtrage selon le statut
+        const matchesStatus =
+            selectedStatus === "all" ||
+            invitation.status === selectedStatus;
+
+        return matchesSearch && matchesStatus;
     });
 
     tableBody.replaceChildren();
@@ -72,9 +82,13 @@ function renderInvitations() {
         const cell = document.createElement("td");
 
         cell.colSpan = 6;
-        cell.textContent = query
-            ? "Aucun résultat pour cette recherche."
-            : "Aucune invitation enregistrée.";
+
+        if (invitations.length === 0) {
+            cell.textContent = "Aucune invitation enregistrée.";
+        } else {
+            cell.textContent =
+                "Aucune invitation ne correspond à votre recherche et à votre filtre.";
+        }
 
         row.appendChild(cell);
         tableBody.appendChild(row);
@@ -84,12 +98,14 @@ function renderInvitations() {
             const row = document.createElement("tr");
 
             addCell(row, invitation.invitation_number);
+
             addCell(
                 row,
                 [guest.last_name, guest.first_names]
                     .filter(Boolean)
                     .join(" ") || "—"
             );
+
             addCell(row, guest.organization || "—");
             addCell(row, formatDate(invitation.created_at));
             addCell(row, formatDate(invitation.checked_in_at));
@@ -227,6 +243,7 @@ async function initialize() {
 }
 
 searchInput.addEventListener("input", renderInvitations);
+statusFilter.addEventListener("change", renderInvitations);
 refreshButton.addEventListener("click", loadInvitations);
 
 logoutButton.addEventListener("click", async () => {
