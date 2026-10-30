@@ -1,139 +1,128 @@
 <!DOCTYPE html>
-
 <html lang="fr">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-```
-<title>Tableau de bord | AIESEC Gala 2027</title>
+    <title>Tableau de bord | AIESEC Gala 2027</title>
 
-<link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js"></script>
-<script src="js/dashboard.js" defer></script>
-```
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
 
+    <!-- Bibliothèque graphique -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Script du tableau de bord -->
+    <script src="js/dashboard.js" defer></script>
 </head>
 
 <body class="dashboard-page">
 
-```
-<aside class="sidebar">
+    <aside class="sidebar">
 
-    <a class="brand" href="index.html">
-        <img src="assets/logo-aiesec.png" alt="AIESEC">
-        <span>GALA <b>2027</b></span>
-    </a>
-
-    <p class="sidebar-label">MENU PRINCIPAL</p>
-
-    <a class="side-link active" href="dashboard.html">
-        ▦ &nbsp; Tableau de bord
-    </a>
-
-    <a class="side-link" href="create-invitation.html">
-        ♧ &nbsp; Invitations
-    </a>
-
-    <a class="side-link" href="scanner.html">
-        ▣ &nbsp; Scanner QR
-    </a>
-
-    <div class="sidebar-bottom">
-
-        <a href="index.html" class="side-link">
-            ← Voir le site public
+        <a class="brand" href="index.html">
+            <img src="assets/logo-aiesec.png" alt="AIESEC">
+            <span>GALA <b>2027</b></span>
         </a>
 
-        <button id="logout-button" class="side-link logout">
-            ↪ &nbsp; Déconnexion
-        </button>
+        <p class="sidebar-label">MENU PRINCIPAL</p>
 
-    </div>
+        <a class="side-link active" href="dashboard.html">
+            ▦ &nbsp; Tableau de bord
+        </a>
 
-</aside>
+        <a class="side-link" href="invitations.html">
+            ♧ &nbsp; Invitations
+        </a>
 
-<main class="dash-content">
+        <a class="side-link" href="scanner.html">
+            ▣ &nbsp; Scanner QR
+        </a>
 
-    <p class="eyebrow">AIESEC · GALA 2027</p>
+        <div class="sidebar-bottom">
 
-    <h1>Tableau de bord</h1>
+            <a href="index.html" class="side-link">
+                ← Voir le site public
+            </a>
 
-    <p class="muted">
-        Bienvenue dans l’espace de gestion du dîner de gala.
-    </p>
+            <button id="logout-button" class="side-link logout">
+                ↪ &nbsp; Déconnexion
+            </button>
 
-    <div id="dashboard-message" class="notice">
-        Vérification de votre session…
-    </div>
-
-    <section class="stats-grid">
-
-        <article class="stat-card">
-            <span>Invitations créées</span>
-            <strong>—</strong>
-            <small>Statistiques à connecter</small>
-        </article>
-
-        <article class="stat-card">
-            <span>Entrées validées</span>
-            <strong>—</strong>
-            <small>Contrôle QR à configurer</small>
-        </article>
-
-        <article class="stat-card">
-            <span>Invitations restantes</span>
-            <strong>—</strong>
-            <small>Calcul après connexion des données</small>
-        </article>
-
-    </section>
-
-    <section class="content-card">
-
-        <div class="card-heading">
-            <div>
-                <p class="eyebrow">PROCHAINES ÉTAPES</p>
-                <h2>Préparation de la plateforme</h2>
-            </div>
-
-            <span class="status-pill">Phase 1</span>
         </div>
 
-        <ol class="steps">
+    </aside>
 
-            <li>
-                <span>1</span>
+    <main class="dash-content">
+
+        <p class="eyebrow">AIESEC · GALA 2027</p>
+
+        <h1>Tableau de bord</h1>
+
+        <p class="muted">
+            Bienvenue dans l'espace de gestion du dîner de gala.
+        </p>
+
+        <div id="dashboard-message" class="notice">
+            Vérification de votre session…
+        </div>
+
+        <!-- Statistiques -->
+        <section class="stats-grid">
+
+            <article class="stat-card">
+                <span>Invitations créées</span>
+                <strong id="total-invitations">—</strong>
+                <small>Total des invitations enregistrées</small>
+            </article>
+
+            <article class="stat-card">
+                <span>Entrées validées</span>
+                <strong id="total-entries">—</strong>
+                <small>Personnes déjà accueillies</small>
+            </article>
+
+            <article class="stat-card">
+                <span>Invitations valides</span>
+                <strong id="total-valid">—</strong>
+                <small>Invitations encore utilisables</small>
+            </article>
+
+            <article class="stat-card">
+                <span>Invitations révoquées</span>
+                <strong id="total-revoked">—</strong>
+                <small>Invitations désactivées</small>
+            </article>
+
+        </section>
+
+        <!-- Graphique -->
+        <section class="content-card chart-card">
+
+            <div class="card-heading">
                 <div>
-                    <b>Connexion administrateur</b>
-                    <p>Vérifier la session et le rôle dans Supabase.</p>
+                    <p class="eyebrow">ANALYSE DES INVITATIONS</p>
+                    <h2>Répartition des invitations</h2>
                 </div>
-            </li>
 
-            <li>
-                <span>2</span>
-                <div>
-                    <b>Gestion des invitations</b>
-                    <p>Créer, consulter et désactiver les invitations.</p>
-                </div>
-            </li>
+                <span class="status-pill">Gala 2027</span>
+            </div>
 
-            <li>
-                <span>3</span>
-                <div>
-                    <b>QR code et contrôle d’entrée</b>
-                    <p>Vérifier chaque code côté serveur et empêcher les doublons.</p>
-                </div>
-            </li>
+            <div class="chart-container">
+                <canvas id="invitations-chart"></canvas>
+            </div>
 
-        </ol>
+            <p id="chart-message" class="muted chart-message">
+                Chargement des statistiques…
+            </p>
 
-    </section>
+        </section>
 
-</main>
-```
+    </main>
 
 </body>
 </html>

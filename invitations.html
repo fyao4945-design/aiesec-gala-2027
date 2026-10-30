@@ -10,8 +10,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
-<script src="js/invitations.js" defer></script>
-
 
 </head>
 
@@ -114,12 +112,13 @@
                         <th>Créée le</th>
                         <th>Entrée</th>
                         <th>Statut</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
                 <tbody id="invitations-body">
                     <tr>
-                        <td colspan="6">
+                        <td colspan="7">
                             Chargement…
                         </td>
                     </tr>
@@ -134,5 +133,98 @@
     </section>
 
 </main>
+<!-- Fenêtre modale des détails -->
+<div id="details-modal" class="modal-overlay" hidden>
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <div>
+                <span class="modal-subtitle">AIESEC 2027</span>
+                <h2>Détails de l'invitation</h2>
+            </div>
+
+            <button type="button" id="close-modal" class="close-modal">
+                &times;
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="invitation-number">
+                <span>Numéro d'invitation</span>
+                <strong id="detail-number">—</strong>
+            </div>
+
+            <h3>Informations de l'invité</h3>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span>Nom</span>
+                    <strong id="detail-lastname">—</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Prénoms</span>
+                    <strong id="detail-firstnames">—</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Organisation</span>
+                    <strong id="detail-organization">—</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Statut</span>
+                    <strong id="detail-status">—</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Date de création</span>
+                    <strong id="detail-created">—</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Date d'entrée</span>
+                    <strong id="detail-entry">—</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" id="modal-close-button">
+                Fermer
+            </button>
+        </div>
+
+    </div>
+</div>
+<!-- Modal de confirmation de révocation -->
+<div id="revoke-modal" class="modal-overlay" hidden>
+    <div class="modal-content revoke-modal-content">
+
+        <div class="revoke-icon">!</div>
+
+        <h2>Révoquer cette invitation ?</h2>
+
+        <p id="revoke-message">
+            Êtes-vous sûr de vouloir révoquer cette invitation ?
+        </p>
+
+        <p class="revoke-warning">
+            Cette action empêchera l'utilisation de ce QR code.
+        </p>
+
+        <div class="modal-actions">
+            <button type="button" id="cancel-revoke" class="cancel-button">
+                Annuler
+            </button>
+
+            <button type="button" id="confirm-revoke" class="confirm-revoke-button">
+                Oui, révoquer
+            </button>
+        </div>
+
+    </div>
+</div>
+<script src="js/invitations.js"></script>
 </body>
 </html>

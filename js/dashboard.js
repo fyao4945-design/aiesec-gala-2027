@@ -1,152 +1,262 @@
 document.addEventListener("DOMContentLoaded", async () => {
-const message = document.getElementById("dashboard-message");
-const logoutButton = document.getElementById("logout-button");
-const statCards = document.querySelectorAll(".stat-card");
 
-function showMessage(text, type = "") {
-    if (!message) return;
-    message.textContent = text;
-    message.className = "notice" + (type ? ` ${type}` : "");
-}
+    const message = document.getElementById("dashboard-message");
+    const logoutButton = document.getElementById("logout-button");
+    const chartMessage = document.getElementById("chart-message");
 
-function showStat(index, value, description) {
-    const card = statCards[index];
-    if (!card) return;
+    let invitationsChart = null;
 
-    const number = card.querySelector("strong");
-    const small = card.querySelector("small");
+    function showMessage(text, type = "") {
+        if (!message) return;
 
-    if (number) number.textContent = value;
-    if (small && description) small.textContent = description;
-}
-
-try {
-    if (!window.supabase || !window.AIESEC_CONFIG) {
-        throw new Error("La configuration Supabase est introuvable.");
+        message.textContent = text;
+        message.className = "notice" + (type ? ` ${type}` : "");
     }
 
-    const { SUPABASE_URL, SUPABASE_ANON_KEY } = window.AIESEC_CONFIG;
+    // Mettre à jour une statistique
+    function showStat(id, value) {
+        const element = document.getElementById(id);
 
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-        throw new Error("L'URL ou la clé publique Supabase manque dans config.js.");
+        if (element) {
+            element.textContent = value;
+        }
     }
 
-    const client = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
+    // Créer le graphique
+    function createChart(valid, used, revoked) {
 
-    const { data: sessionData, error: sessionError } =
-        await client.auth.getSession();
+        const canvas = document.getElementById("invitations-chart");
 
-    if (sessionError) throw sessionError;
+        if (!canvas || !window.Chart) {
+            chartMessage.textContent =
+                "Le graphique n'a pas pu être chargé.";
 
-    const session = sessionData.session;
+            return;
+        }
 
-    if (!session) {
-        window.location.href = "connexion.html";
-        return;
+        if (invitationsChart) {
+            invitationsChart.destroy();
+        }
+
+        invitationsChart = new Chart(canvas, {
+
+            type: "doughnut",
+
+            data: {
+                labels: [
+                    "Valides",
+                    "Utilisées",
+                    "Révoquées"
+                ],
+
+                datasets: [{
+                    data: [valid, used, revoked],
+
+                    backgroundColor: [
+                        "#0b8f55",
+                        "#2463eb",
+                        "#dc3545"
+                    ],
+
+                    borderWidth: 2,
+                    borderColor: "#ffffff",
+                    hoverOffset: 8
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label} : ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+
+        });
+
+        chartMessage.textContent =
+            "Répartition des invitations enregistrées pour le gala.";
     }
 
-    const { data: profile, error: profileError } = await client
-        .from("profiles")
-        .select("full_name, role, is_active")
-        .eq("id", session.user.id)
-        .maybeSingle();
+    try {
 
-    if (profileError) throw profileError;
+        // Vérification de la configuration
+        if (!window.supabase || !window.AIESEC_CONFIG) {
+            throw new Error("Configuration Supabase introuvable.");
+        }
 
-    if (
-        !profile ||
-        !profile.is_active ||
-        !["admin", "organizer"].includes(profile.role)
-    ) {
-        await client.auth.signOut();
-        window.location.href = "connexion.html";
-        return;
-    }
+        const {
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        } = window.AIESEC_CONFIG;
 
-    showMessage(
-        `Connecté en tant que ${profile.role === "admin" ? "administrateur" : "organisateur"}.`
-    );
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+            throw new Error("Configuration Supabase incomplète.");
+        }
 
-    if (logoutButton) {
+        const client = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+        // Vérification de la session
+        const { data: sessionData, error: sessionError } =
+            await client.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        const session = sessionData.session;
+
+        if (!session) {
+            window.location.href = "connexion.html";
+            return;
+        }
+
+        // Vérification du profil
+        const { data: profile, error: profileError } = await client
+            .from("profiles")
+            .select("full_name, role, is_active")
+            .eq("id", session.user.id)
+            .maybeSingle();
+
+        if (profileError) throw profileError;
+
+        if (
+            !profile ||
+            !profile.is_active ||
+            !["admin", "organizer"].includes(profile.role)
+        ) {
+            await client.auth.signOut();
+            window.location.href = "connexion.html";
+            return;
+        }
+
+        showMessage(
+            `Connecté en tant que ${profile.role === "admin"
+                ? "administrateur"
+                : "organisateur"}.`
+        );
+
+        // Déconnexion
         logoutButton.addEventListener("click", async () => {
             await client.auth.signOut();
             window.location.href = "connexion.html";
         });
-    }
 
-    // Identifier le gala actif.
-    const { data: event, error: eventError } = await client
-        .from("events")
-        .select("id, name")
-        .eq("is_active", true)
-        .eq("name", "Dîner de Gala AIESEC 2027")
-        .maybeSingle();
+        // Recherche de l'événement actif
+        const { data: event, error: eventError } = await client
+            .from("events")
+            .select("id, name")
+            .eq("is_active", true)
+            .eq("name", "Dîner de Gala AIESEC 2027")
+            .maybeSingle();
 
-    if (eventError) throw eventError;
+        if (eventError) throw eventError;
 
-    if (!event) {
-        showMessage(
-            "Connexion réussie, mais aucun événement actif correspondant au gala n'a été trouvé."
+        if (!event) {
+
+            showMessage(
+                "Aucun événement actif correspondant au gala n'a été trouvé."
+            );
+
+            showStat("total-invitations", 0);
+            showStat("total-entries", 0);
+            showStat("total-valid", 0);
+            showStat("total-revoked", 0);
+
+            chartMessage.textContent =
+                "Aucune donnée disponible pour le moment.";
+
+            return;
+        }
+
+        // Récupération des invitations
+        const { data: invitations, error: invitationsError } =
+            await client
+                .from("invitations")
+                .select(`
+                    status,
+                    guests!inner (
+                        event_id
+                    )
+                `)
+                .eq("guests.event_id", event.id);
+
+        if (invitationsError) throw invitationsError;
+
+        const allInvitations = invitations || [];
+
+        // Calcul des statistiques
+        const totalInvitations = allInvitations.length;
+
+        const validCount = allInvitations.filter(
+            invitation => invitation.status === "valid"
+        ).length;
+
+        const usedCount = allInvitations.filter(
+            invitation => invitation.status === "used"
+        ).length;
+
+        const revokedCount = allInvitations.filter(
+            invitation => invitation.status === "revoked"
+        ).length;
+
+        // Récupération des entrées acceptées
+        const { count: entryCount, error: entryError } =
+            await client
+                .from("entry_logs")
+                .select(
+                    "id, invitations!inner(guest_id, guests!inner(event_id))",
+                    {
+                        count: "exact",
+                        head: true
+                    }
+                )
+                .eq("action", "accepted")
+                .eq("invitations.guests.event_id", event.id);
+
+        if (entryError) throw entryError;
+
+        // Affichage des statistiques
+        showStat("total-invitations", totalInvitations);
+        showStat("total-entries", entryCount ?? 0);
+        showStat("total-valid", validCount);
+        showStat("total-revoked", revokedCount);
+
+        // Affichage du graphique
+        createChart(
+            validCount,
+            usedCount,
+            revokedCount
         );
-        showStat(0, "—", "Événement introuvable");
-        showStat(1, "—", "Événement introuvable");
-        showStat(2, "—", "Événement introuvable");
-        return;
+
+    } catch (error) {
+
+        console.error("Erreur du tableau de bord :", error);
+
+        showMessage(
+            "Impossible de charger les statistiques. Vérifie la console du navigateur et les autorisations Supabase."
+        );
+
+        chartMessage.textContent =
+            "Impossible de charger les données du graphique.";
+
     }
 
-    // Compter les invitations du gala.
-    const { count: invitationCount, error: invitationError } =
-        await client
-            .from("invitations")
-            .select("id, guests!inner(event_id)", {
-                count: "exact",
-                head: true
-            })
-            .eq("guests.event_id", event.id);
-
-    if (invitationError) throw invitationError;
-
-    // Compter les entrées validées.
-    const { count: entryCount, error: entryError } =
-        await client
-            .from("entry_logs")
-            .select("id, invitations!inner(guest_id, guests!inner(event_id))", {
-                count: "exact",
-                head: true
-            })
-            .eq("action", "accepted")
-            .eq("invitations.guests.event_id", event.id);
-
-    if (entryError) throw entryError;
-
-    const totalInvitations = invitationCount ?? 0;
-    const totalEntries = entryCount ?? 0;
-
-    // Les invitations restantes correspondent aux invitations
-    // dont le statut est "valid".
-    const { count: remainingCount, error: remainingError } =
-        await client
-            .from("invitations")
-            .select("id, guests!inner(event_id)", {
-                count: "exact",
-                head: true
-            })
-            .eq("guests.event_id", event.id)
-            .eq("status", "valid");
-
-    if (remainingError) throw remainingError;
-
-    showStat(0, totalInvitations, "Invitations enregistrées");
-    showStat(1, totalEntries, "Entrées acceptées");
-    showStat(2, remainingCount ?? 0, "Invitations encore valides");
-
-} catch (error) {
-    console.error("Erreur du tableau de bord :", error);
-
-    showMessage(
-        "Impossible de charger les statistiques. Vérifie la console du navigateur et les autorisations Supabase."
-    );
-}});
+});
