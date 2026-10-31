@@ -47,12 +47,14 @@ function addCell(row, value) {
     return cell;
 }
 
-// Affichage des invitations
-function renderInvitations() {
+// Récupérer les invitations correspondant aux filtres
+function getFilteredInvitations() {
+
     const query = searchInput.value.trim().toLocaleLowerCase("fr");
     const selectedStatus = statusFilter.value;
 
-    const filtered = invitations.filter((invitation) => {
+    return invitations.filter((invitation) => {
+
         const guest = invitation.guests || {};
 
         const searchable = [
@@ -73,6 +75,10 @@ function renderInvitations() {
 
         return matchesSearch && matchesStatus;
     });
+}
+// Affichage des invitations
+function renderInvitations() {
+    const filtered = getFilteredInvitations();
 
     tableBody.replaceChildren();
 
@@ -114,12 +120,9 @@ function renderInvitations() {
 
             statusCell.dataset.status = invitation.status || "";
 
-            // Colonne Actions
             const actionCell = document.createElement("td");
 
-            // Bouton Voir les détails
             const detailsButton = document.createElement("button");
-
             detailsButton.type = "button";
             detailsButton.textContent = "Voir les détails";
             detailsButton.className = "details-button";
@@ -130,7 +133,6 @@ function renderInvitations() {
 
             actionCell.appendChild(detailsButton);
 
-            // Bouton Révoquer
             if (invitation.status === "valid") {
                 const revokeButton = document.createElement("button");
 
@@ -153,7 +155,210 @@ function renderInvitations() {
     resultsCount.textContent =
         `${filtered.length} invitation(s) affichée(s) sur ${invitations.length}.`;
 }
+// Exportation Excel
+function exportToExcel() {
 
+    if (typeof XLSX === "undefined") {
+        showMessage("La bibliothèque Excel n'a pas pu être chargée.");
+        return;
+    }
+
+    const filtered = getFilteredInvitations();
+
+    if (filtered.length === 0) {
+        showMessage("Aucune invitation à exporter.");
+        return;
+    }
+
+    const excelData = filtered.map((invitation) => {
+
+        const guest = invitation.guests || {};
+
+        return {
+            "Numéro d'invitation": invitation.invitation_number,
+            "Nom": guest.last_name || "",
+            "Prénoms": guest.first_names || "",
+            "Organisation": guest.organization || "",
+            "Date de création": formatDate(invitation.created_at),
+            "Date d'entrée": formatDate(invitation.checked_in_at),
+            "Statut": statusLabel(invitation.status)
+        };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    worksheet["!cols"] = [
+        { wch: 23 },
+        { wch: 20 },
+        { wch: 25 },
+        { wch: 25 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 18 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Invitations"
+    );
+
+    const date = new Date().toISOString().slice(0, 10);
+
+    XLSX.writeFile(
+        workbook,
+        `AIESEC_Gala_Invitations_${date}.xlsx`
+    );
+
+    showMessage(`${filtered.length} invitation(s) exportée(s) avec succès.`);
+}
+
+// Impression de la liste des invités
+// Impression de la liste des invités
+function printInvitations() {
+    const filtered = getFilteredInvitations();
+
+    if (filtered.length === 0) {
+        showMessage("Aucune invitation à imprimer.");
+        return;
+    }
+
+    const printWindow = window.open("", "_blank");
+
+    if (!printWindow) {
+        showMessage("Autorisez les fenêtres pop-up pour imprimer.");
+        return;
+    }
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (character) => {
+            const entities = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            };
+
+            return entities[character];
+        });
+    }
+
+    const rows = filtered.map((invitation) => {
+        const guest = invitation.guests || {};
+
+        return `
+            <tr>
+                <td>${escapeHTML(invitation.invitation_number)}</td>
+                <td>${escapeHTML(guest.last_name)}</td>
+                <td>${escapeHTML(guest.first_names)}</td>
+                <td>${escapeHTML(guest.organization)}</td>
+                <td>${escapeHTML(formatDate(invitation.created_at))}</td>
+                <td>${escapeHTML(statusLabel(invitation.status))}</td>
+            </tr>
+        `;
+    }).join("");
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Liste des invités - AIESEC Gala 2027</title>
+
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 25px;
+                    color: #333;
+                }
+
+                h1 {
+                    color: #003b71;
+                    text-align: center;
+                }
+
+                .subtitle {
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 12px;
+                }
+
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 10px;
+                    text-align: left;
+                }
+
+                th {
+                    background: #003b71;
+                    color: white;
+                }
+
+                tr:nth-child(even) {
+                    background: #f4f7fa;
+                }
+
+                .footer {
+                    margin-top: 25px;
+                    text-align: right;
+                    font-size: 11px;
+                    color: #777;
+                }
+
+                @page {
+                    size: A4 landscape;
+                    margin: 12mm;
+                }
+            </style>
+        </head>
+
+        <body>
+            <h1>AIESEC - DÎNER DE GALA 2027</h1>
+
+            <p class="subtitle">
+                Liste des invités · ${filtered.length} participant(s)
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Nom</th>
+                        <th>Prénoms</th>
+                        <th>Organisation</th>
+                        <th>Créée le</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+
+            <p class="footer">
+                Document généré le ${new Date().toLocaleString("fr-FR")}
+            </p>
+
+            <script>
+                window.onload = function() {
+                    window.print();
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+}
 // Affichage des détails
 function showInvitationDetails(invitation) {
     const guest = invitation.guests || {};
@@ -395,6 +600,11 @@ async function initialize() {
 }
 
 // Événements
+document.getElementById("export-excel-button")
+    .addEventListener("click", exportToExcel);
+
+document.getElementById("print-button")
+    .addEventListener("click", printInvitations);
 document.getElementById("cancel-revoke")
     .addEventListener("click", closeRevokeModal);
 

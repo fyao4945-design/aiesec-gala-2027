@@ -1037,3 +1037,64 @@ footer {
         height: 280px;
     }
 }
+/* Barre d'outils des invitations */
+
+.invitation-toolbar {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.search-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.export-button,
+.print-button {
+    border: none;
+    padding: 11px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.export-button {
+    background: #198754;
+    color: white;
+}
+
+.export-button:hover {
+    background: #146c43;
+}
+
+.print-button {
+    background: #003b71;
+    color: white;
+}
+
+.print-button:hover {
+    background: #002b52;
+}
+
+@media (max-width: 650px) {
+    .invitation-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .invitation-toolbar > * {
+        width: 100%;
+    }
+}

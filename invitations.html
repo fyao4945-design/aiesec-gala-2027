@@ -7,7 +7,7 @@
 <title>Gestion des invitations | AIESEC Gala 2027</title>
 
 <link rel="stylesheet" href="css/style.css">
-
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
 
@@ -80,26 +80,38 @@
         </div>
 
         <div class="invitation-toolbar">
-            <label for="search-input">Rechercher un invité</label>
-
-            <input
-                type="search"
-                id="search-input"
-                placeholder="Nom, prénoms ou numéro…"
-            >
             
-<select id="statusFilter">
-    <option value="all">Toutes les invitations</option>
-    <option value="valid">Invitations valides</option>
-    <option value="used">Invitations utilisées</option>
-    <option value="revoked">Invitations révoquées</option>
-</select>
 
+    <div class="search-group">
+        <label for="search-input">Rechercher un invité</label>
 
+        <input
+            type="search"
+            id="search-input"
+            placeholder="Nom, prénoms ou numéro…"
+        >
+    </div>
 
-            <a class="button" href="create-invitation.html">
-                + Créer une invitation
-            </a>
+    <select id="statusFilter">
+        <option value="all">Toutes les invitations</option>
+        <option value="valid">Invitations valides</option>
+        <option value="used">Invitations utilisées</option>
+        <option value="revoked">Invitations révoquées</option>
+    </select>
+
+    <button type="button" id="export-excel-button" class="export-button">
+        ↓ Exporter Excel
+    </button>
+
+    <button type="button" id="print-button" class="print-button">
+        Imprimer
+    </button>
+
+    <a class="button" href="create-invitation.html">
+        + Créer une invitation
+    </a>
+
+</div>
         </div>
 
         <div class="table-wrapper">
