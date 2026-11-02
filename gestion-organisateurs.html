@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des organisateurs | AIESEC Gala 2027</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Bibliothèque Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Configuration Supabase -->
+<script src="js/config.js"></script>
+
+</head>
+
+<body class="dashboard-page">
+
+<div class="admin-layout">
+
+    <!-- BARRE LATÉRALE -->
+    <aside class="sidebar admin-sidebar" id="admin-sidebar">
+
+        <a class="brand" href="index.html">
+            <img src="assets/logo-aiesec.png" alt="AIESEC">
+            <span class="sidebar-text">GALA <b>2027</b></span>
+        </a>
+
+        <button class="sidebar-toggle" id="sidebar-toggle" title="Réduire le menu">
+            ☰
+        </button>
+
+        <p class="sidebar-label sidebar-text">ADMINISTRATION</p>
+
+        <a class="side-link" href="dashboard.html" title="Tableau de bord">
+            <span>▦</span>
+            <span class="sidebar-text">Tableau de bord</span>
+        </a>
+
+        <a class="side-link" href="invitations.html" title="Invitations">
+            <span>♧</span>
+            <span class="sidebar-text">Invitations</span>
+        </a>
+
+        <a class="side-link" href="activites.html" title="Journal d'activités">
+            <span>▤</span>
+            <span class="sidebar-text">Journal d'activités</span>
+        </a>
+
+        <a class="side-link active" href="gestion-organisateurs.html" title="Organisateurs">
+            <span>♙</span>
+            <span class="sidebar-text">Organisateurs</span>
+        </a>
+
+        <a class="side-link" href="scanner.html" title="Scanner QR">
+            <span>▣</span>
+            <span class="sidebar-text">Scanner QR</span>
+        </a>
+
+        <a class="side-link" href="change-password.html" title="Mot de passe">
+            <span>🔒</span>
+            <span class="sidebar-text">Changer le mot de passe</span>
+        </a>
+
+        <div class="sidebar-bottom">
+
+            <a href="index.html" class="side-link" title="Site public">
+                <span>←</span>
+                <span class="sidebar-text">Voir le site public</span>
+            </a>
+
+            <button id="logout-button" class="side-link logout">
+                <span>↪</span>
+                <span class="sidebar-text">Déconnexion</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="admin-main" id="admin-main">
+
+        <header class="admin-header">
+
+            <button class="mobile-menu-button" id="mobile-menu-button">
+                ☰
+            </button>
+
+            <h1>Gestion des organisateurs</h1>
+
+        </header>
+
+       <section class="admin-content">
+
+    <!-- STATISTIQUES -->
+    <div class="organizer-stats">
+
+        <div class="organizer-stat-card">
+            <span class="stat-icon">👥</span>
+            <div>
+                <p>Total organisateurs</p>
+                <h2 id="total-organizers">0</h2>
+            </div>
+        </div>
+
+        <div class="organizer-stat-card">
+            <span class="stat-icon">🟢</span>
+            <div>
+                <p>Comptes actifs</p>
+                <h2 id="active-organizers">0</h2>
+            </div>
+        </div>
+
+        <div class="organizer-stat-card">
+            <span class="stat-icon">🔴</span>
+            <div>
+                <p>Comptes suspendus</p>
+                <h2 id="suspended-organizers">0</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AJOUTER UN ORGANISATEUR -->
+    <div class="organizer-panel">
+
+        <div class="panel-heading">
+            <div>
+                <h2>Ajouter un organisateur</h2>
+                <p>Envoyer une invitation à un nouvel organisateur.</p>
+            </div>
+        </div>
+
+        <form id="organizer-form">
+
+            <div class="form-group">
+                <label for="organizer-name">Nom complet</label>
+                <input
+                    type="text"
+                    id="organizer-name"
+                    placeholder="Ex : Jean Kouassi"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="organizer-email">Adresse e-mail</label>
+                <input
+                    type="email"
+                    id="organizer-email"
+                    placeholder="Ex : jean@email.com"
+                    required
+                >
+            </div>
+
+            <button type="submit" id="add-organizer-button">
+                Envoyer l'invitation
+            </button>
+
+            <p id="organizer-form-message" role="status"></p>
+
+        </form>
+
+    </div>
+
+    <!-- LISTE DES ORGANISATEURS -->
+    <div class="organizer-panel">
+
+        <div class="panel-heading">
+            <div>
+                <h2>Liste des organisateurs</h2>
+                <p>Consulter et gérer les comptes existants.</p>
+            </div>
+
+            <button type="button" id="refresh-organizers">
+                ↻ Actualiser
+            </button>
+        </div>
+
+        <div class="organizer-filters">
+
+            <input
+                type="search"
+                id="organizer-search"
+                placeholder="Rechercher un organisateur..."
+            >
+
+            <select id="organizer-status-filter">
+                <option value="all">Tous les comptes</option>
+                <option value="active">Comptes actifs</option>
+                <option value="suspended">Comptes suspendus</option>
+            </select>
+
+        </div>
+
+        <div class="organizer-table-container">
+
+            <table class="organizer-table">
+
+                <thead>
+                    <tr>
+                        <th>Nom complet</th>
+                        <th>E-mail</th>
+                        <th>Date de création</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="organizers-table-body">
+
+                    <tr>
+                        <td colspan="5">Chargement des organisateurs...</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <p id="organizers-message" role="status"></p>
+
+    </div>
+
+</section>
+
+    </main>
+
+</div>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/gestion-organisateurs.js"></script>
+
+</body>
+</html>

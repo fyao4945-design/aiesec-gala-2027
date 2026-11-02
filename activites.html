@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Journal des activités | AIESEC Gala 2027</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    
+    <script src="js/config.js"></script>
+</head>
+
+<body class="dashboard-page">
+
+    <!-- Barre latérale -->
+    <aside class="sidebar">
+
+        <a class="brand" href="index.html">
+            <img src="assets/logo-aiesec.png" alt="AIESEC">
+            <span>GALA <b>2027</b></span>
+        </a>
+
+        <p class="sidebar-label">MENU PRINCIPAL</p>
+
+        <a class="side-link" href="dashboard.html">
+            ▦ &nbsp; Tableau de bord
+        </a>
+
+        <a class="side-link" href="invitations.html">
+            ♧ &nbsp; Invitations
+        </a>
+
+        <a class="side-link" href="create-invitation.html">
+            ＋ &nbsp; Créer une invitation
+        </a>
+
+        <a class="side-link" href="scanner.html">
+            ▣ &nbsp; Scanner QR
+        </a>
+
+        <a class="side-link active" href="activites.html">
+            ◷ &nbsp; Activités
+        </a>
+
+        <div class="sidebar-bottom">
+
+            <a href="index.html" class="side-link">
+                ← Voir le site public
+            </a>
+
+            <button id="logout-button" class="side-link logout">
+                ↪ &nbsp; Déconnexion
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="dash-content">
+
+        <p class="eyebrow">AIESEC · GALA 2027</p>
+
+        <h1>Journal des activités</h1>
+
+        <p class="muted">
+            Consultez l'historique des opérations et des tentatives
+            de contrôle des invitations.
+        </p>
+
+        <div id="page-message" class="notice" role="status">
+            Chargement du journal des activités…
+        </div>
+
+        <section class="content-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <p class="eyebrow">SURVEILLANCE</p>
+                    <h2>Historique des opérations</h2>
+                </div>
+
+                <button id="refresh-button" type="button">
+                    Actualiser
+                </button>
+
+            </div>
+
+            <!-- Filtres -->
+            <div class="invitation-toolbar">
+
+                <div class="search-group">
+
+                    <label for="search-input">
+                        Rechercher
+                    </label>
+
+                    <input
+                        type="search"
+                        id="search-input"
+                        placeholder="Nom, numéro d'invitation…"
+                    >
+
+                </div>
+
+                <div class="search-group">
+
+                    <label for="action-filter">
+                        Type d'opération
+                    </label>
+
+                    <select id="action-filter">
+
+                        <option value="all">Toutes les opérations</option>
+                        <option value="accepted">Entrées acceptées</option>
+                        <option value="invalid">Invitations invalides</option>
+                        <option value="already_used">Déjà utilisées</option>
+                        <option value="revoked">Invitations révoquées</option>
+
+                    </select>
+
+                </div>
+
+                <div class="search-group">
+
+                    <label for="date-from">
+                        Du
+                    </label>
+
+                    <input type="date" id="date-from">
+
+                </div>
+
+                <div class="search-group">
+
+                    <label for="date-to">
+                        Au
+                    </label>
+
+                    <input type="date" id="date-to">
+
+                </div>
+
+                <button
+                    type="button"
+                    id="reset-filters"
+                    class="print-button"
+                >
+                    Réinitialiser
+                </button>
+
+                <button
+                    type="button"
+                    id="export-excel-button"
+                    class="export-button"
+                >
+                    ↓ Exporter Excel
+                </button>
+
+            </div>
+
+   
+            
+<!-- Tableau des activités -->
+<div class="table-wrapper activities-table-wrapper">
+
+    <table class="invitations-table activities-table">
+
+        <thead>
+            <tr>
+                <th>Date et heure</th>
+                <th>Invitation</th>
+                <th>Participant</th>
+                <th>Organisateur</th>
+                <th>Opération</th>
+                <th>Résultat</th>
+                <th>Informations</th>
+            </tr>
+        </thead>
+
+        <tbody id="activities-body">
+            <tr>
+                <td colspan="7">Chargement des activités…</td>
+            </tr>
+        </tbody>
+
+    </table>
+
+</div>
+
+<p id="results-count" class="muted">
+    Chargement des résultats…
+</p>
+
+
+            <p id="results-count" class="muted">
+                Chargement des résultats…
+            </p>
+
+        </section>
+
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/activites.js"></script>
+
+</body>
+</html>

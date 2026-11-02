@@ -114,6 +114,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             SUPABASE_URL,
             SUPABASE_ANON_KEY
         );
+        window.aiesecClient = client;
 
         // Vérification de la session
         const { data: sessionData, error: sessionError } =
@@ -234,6 +235,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (entryError) throw entryError;
 
         // Affichage des statistiques
+        showStat("total-used", usedCount);
+
+const usageRate = totalInvitations > 0
+    ? ((usedCount / totalInvitations) * 100).toFixed(1)
+    : "0.0";
+
+showStat("usage-rate", `${usageRate} %`);
         showStat("total-invitations", totalInvitations);
         showStat("total-entries", entryCount ?? 0);
         showStat("total-valid", validCount);

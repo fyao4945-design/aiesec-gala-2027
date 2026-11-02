@@ -428,6 +428,7 @@ async function confirmRevokeInvitation() {
     confirmButton.textContent = "Révocation...";
 
     try {
+        // 1. Révoquer l'invitation
         const { data, error } = await supabaseClient
             .from("invitations")
             .update({ status: "revoked" })
@@ -442,13 +443,42 @@ async function confirmRevokeInvitation() {
             throw new Error("Cette invitation n'est plus valide.");
         }
 
+        // 2. Enregistrer la révocation dans le journal
+        // Récupérer l'organisateur connecté
+const { data: userData, error: userError } =
+    await supabaseClient.auth.getUser();
+
+if (userError) throw userError;
+
+const organizerId = userData.user?.id || null;
+        const { error: logError } = await supabaseClient
+    .from("entry_logs")
+    .insert({
+        invitation_id: invitation.id,
+        organizer_id: organizerId,
+        action: "revoked",
+        note: `Révocation de l'invitation ${invitation.invitation_number}`
+    });
+
+        if (logError) {
+            console.error(
+                "Erreur d'enregistrement dans le journal :",
+                logError
+            );
+
+            showMessage(
+                "Invitation révoquée, mais l'activité n'a pas pu être enregistrée."
+            );
+        } else {
+            showMessage(
+                `L'invitation ${invitation.invitation_number} a été révoquée avec succès.`
+            );
+        }
+
+        // 3. Actualiser l'affichage
         invitation.status = "revoked";
 
         renderInvitations();
-
-        showMessage(
-            `L'invitation ${invitation.invitation_number} a été révoquée avec succès.`
-        );
 
         closeRevokeModal();
 

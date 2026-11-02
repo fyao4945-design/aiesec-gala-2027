@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     button.disabled = true; message.textContent = "Connexion en cours…";
     try {
       const client = window.supabase.createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY);
+      window.aiesecClient = client;
       const { data, error } = await client.auth.signInWithPassword({
         email: document.querySelector("#email").value.trim(),
         password: document.querySelector("#password").value
