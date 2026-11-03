@@ -1587,7 +1587,8 @@ footer {
     color: #c62828;
 }
 
-.organizer-view-button {
+.organizer-view-button,
+.organizer-edit-button {
     padding: 7px 12px;
     border: none;
     border-radius: 5px;
@@ -1605,4 +1606,279 @@ footer {
     font-size: 14px;
     font-weight: 600;
     margin: 5px 0 0;
+}
+/* Bouton d'activation du compte */
+#password-button {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 8px;
+    background: #0878D1;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#password-button:hover {
+    background: #0564B2;
+    transform: translateY(-1px);
+}
+
+#password-button:disabled {
+    background: #8ABCE0;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================================
+   MODALES PERSONNALISÉES - ORGANISATEURS
+========================================= */
+
+.custom-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.60);
+    backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.custom-modal-overlay.active {
+    display: flex;
+}
+
+.custom-modal {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    padding: 32px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.20);
+    text-align: center;
+    animation: modalAppear 0.25s ease;
+}
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f3fc;
+    color: #0878D1;
+    border-radius: 50%;
+    font-size: 27px;
+}
+
+.custom-modal h2 {
+    margin: 0 0 12px;
+    color: #172b4d;
+    font-size: 21px;
+}
+
+.custom-modal > p {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.modal-btn {
+    min-height: 44px;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.modal-cancel {
+    background: #edf0f4;
+    color: #475569;
+}
+
+.modal-cancel:hover {
+    background: #dfe4eb;
+}
+
+.modal-primary {
+    background: #0878D1;
+    color: #ffffff;
+}
+
+.modal-primary:hover {
+    background: #0564B2;
+}
+
+.modal-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 27px;
+    cursor: pointer;
+}
+
+.organizer-details {
+    margin-top: 22px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.organizer-details p {
+    margin: 12px 0;
+    color: #475569;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.organizer-details strong {
+    color: #172b4d;
+}
+
+@media (max-width: 480px) {
+    .custom-modal {
+        padding: 25px 20px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-btn {
+        width: 100%;
+    }
+}
+/* Actions des organisateurs */
+
+.organizer-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.organizer-toggle-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.suspend-button {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.suspend-button:hover {
+    background: #fecaca;
+}
+
+.reactivate-button {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.reactivate-button:hover {
+    background: #bbf7d0;
+}
+
+.organizer-toggle-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* =====================================
+   BOUTONS DE LA FENÊTRE DE MODIFICATION
+===================================== */
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.modal-cancel-button,
+.modal-confirm-button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+/* Bouton ANNULER */
+.modal-cancel-button {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.modal-cancel-button:hover {
+    background: #d1d5db;
+}
+
+/* Bouton ENREGISTRER */
+.modal-confirm-button {
+    background: #0878D1;
+    color: #ffffff;
+}
+
+.modal-confirm-button:hover {
+    background: #0665b3;
+}
+
+/* Effet au clic */
+.modal-cancel-button:active,
+.modal-confirm-button:active {
+    transform: scale(0.97);
+}
+
+/* État désactivé */
+.modal-cancel-button:disabled,
+.modal-confirm-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }

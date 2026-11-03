@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
+
 // =====================================
 // INITIALISATION
 // =====================================
@@ -24,7 +25,106 @@ const refreshButton = document.getElementById("refresh-organizers");
 const formMessage = document.getElementById("organizer-form-message");
 const organizersMessage = document.getElementById("organizers-message");
 
+const organizerForm = document.getElementById("organizer-form");
+const addButton = document.getElementById("add-organizer-button");
+// Éléments de la fenêtre de modification
+const editOrganizerModal = document.getElementById("edit-organizer-modal");
+const editOrganizerForm = document.getElementById("edit-organizer-form");
+const editOrganizerId = document.getElementById("edit-organizer-id");
+const editOrganizerName = document.getElementById("edit-organizer-name");
+const editOrganizerEmail = document.getElementById("edit-organizer-email");
+const editOrganizerMessage = document.getElementById("edit-organizer-message");
+
+const editOrganizerClose = document.getElementById("edit-organizer-close");
+const editOrganizerCancel = document.getElementById("edit-organizer-cancel");
+
 let organizers = [];
+
+// =====================================
+// MODALE DE CONFIRMATION
+// =====================================
+
+const confirmModal = document.getElementById("confirm-modal");
+const confirmModalMessage = document.getElementById("confirm-modal-message");
+const confirmAccept = document.getElementById("confirm-accept");
+const confirmCancel = document.getElementById("confirm-cancel");
+
+let confirmResolver = null;
+
+function openConfirmModal(message, buttonText = "Confirmer") {
+
+    confirmModalMessage.textContent = message;
+    confirmAccept.textContent = buttonText;
+
+    confirmModal.classList.add("active");
+
+    return new Promise(resolve => {
+        confirmResolver = resolve;
+    });
+}
+
+function closeConfirmModal(result) {
+
+    confirmModal.classList.remove("active");
+
+    if (confirmResolver) {
+        confirmResolver(result);
+        confirmResolver = null;
+    }
+
+    confirmAccept.textContent = "Confirmer";
+}
+
+confirmAccept.addEventListener("click", () => {
+    closeConfirmModal(true);
+});
+
+confirmCancel.addEventListener("click", () => {
+    closeConfirmModal(false);
+});
+
+confirmModal.addEventListener("click", event => {
+    if (event.target === confirmModal) {
+        closeConfirmModal(false);
+    }
+});
+
+// =====================================
+// MODALE DES INFORMATIONS
+// =====================================
+
+const detailsModal = document.getElementById("details-modal");
+
+const detailName = document.getElementById("detail-name");
+const detailEmail = document.getElementById("detail-email");
+const detailStatus = document.getElementById("detail-status");
+const detailDate = document.getElementById("detail-date");
+
+const detailsClose = document.getElementById("details-close");
+const detailsOk = document.getElementById("details-ok");
+
+function closeDetailsModal() {
+    detailsModal.classList.remove("active");
+}
+
+detailsClose.addEventListener("click", closeDetailsModal);
+detailsOk.addEventListener("click", closeDetailsModal);
+
+detailsModal.addEventListener("click", event => {
+    if (event.target === detailsModal) {
+        closeDetailsModal();
+    }
+});
+
+// Fermeture des modales avec la touche Échap
+document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
+        closeConfirmModal(false);
+        closeDetailsModal();
+    }
+
+});
 
 // =====================================
 // VERIFICATION DE LA SESSION
@@ -53,7 +153,6 @@ if (
     profile.role !== "admin" ||
     profile.is_active !== true
 ) {
-    alert("Accès réservé à l'administrateur.");
     window.location.href = "dashboard.html";
     return;
 }
@@ -122,6 +221,7 @@ async function loadOrganizers() {
     }
 }
 
+
 // =====================================
 // STATISTIQUES
 // =====================================
@@ -144,7 +244,7 @@ function updateStatistics() {
 }
 
 // =====================================
-// AFFICHAGE DU TABLEAU
+// CHARGEMENT DES ORGANISATEURS
 // =====================================
 
 function displayOrganizers() {
@@ -167,13 +267,11 @@ function displayOrganizers() {
     });
 
     if (filtered.length === 0) {
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="5">Aucun organisateur trouvé.</td>
             </tr>
         `;
-
         return;
     }
 
@@ -187,6 +285,26 @@ function displayOrganizers() {
             ? '<span class="organizer-badge active">Actif</span>'
             : '<span class="organizer-badge suspended">Suspendu</span>';
 
+        const actionButton = organizer.is_active
+            ? `
+                <button
+                    type="button"
+                    class="organizer-toggle-button suspend-button"
+                    data-id="${escapeHTML(organizer.id)}"
+                    data-action="suspend">
+                    Suspendre
+                </button>
+            `
+            : `
+                <button
+                    type="button"
+                    class="organizer-toggle-button reactivate-button"
+                    data-id="${escapeHTML(organizer.id)}"
+                    data-action="reactivate">
+                    Réactiver
+                </button>
+            `;
+
         return `
             <tr>
                 <td>${escapeHTML(organizer.full_name || "Sans nom")}</td>
@@ -194,20 +312,30 @@ function displayOrganizers() {
                 <td>${date}</td>
                 <td>${statusBadge}</td>
                 <td>
-                    <button
-                        type="button"
-                        class="organizer-view-button"
-                        data-id="${escapeHTML(organizer.id)}"
-                        title="Voir les informations"
-                    >
-                        Voir
-                    </button>
+                    <div class="organizer-actions">
+
+                        <button
+                            type="button"
+                            class="organizer-view-button"
+                            data-id="${escapeHTML(organizer.id)}">
+                            Voir
+                        </button>
+
+                        <button
+                            type="button"
+                            class="organizer-edit-button"
+                            data-id="${escapeHTML(organizer.id)}">
+                            Modifier
+                        </button>
+
+                        ${actionButton}
+
+                    </div>
                 </td>
             </tr>
         `;
 
     }).join("");
-
 }
 
 // =====================================
@@ -251,24 +379,241 @@ tableBody.addEventListener("click", event => {
 
     if (!organizer) return;
 
-    alert(
-        "Nom : " + (organizer.full_name || "Non renseigné") +
-        "\nE-mail : " + (organizer.email || "Non disponible") +
-        "\nStatut : " + (organizer.is_active ? "Actif" : "Suspendu") +
-        "\nDate de création : " +
-        (organizer.created_at
-            ? new Date(organizer.created_at).toLocaleDateString("fr-FR")
-            : "Non disponible")
+    detailName.textContent = organizer.full_name || "Non renseigné";
+
+    detailEmail.textContent = organizer.email || "Non disponible";
+
+    detailStatus.textContent = organizer.is_active
+        ? "Actif"
+        : "Suspendu";
+
+    detailDate.textContent = organizer.created_at
+        ? new Date(organizer.created_at).toLocaleDateString("fr-FR")
+        : "Non disponible";
+
+    detailsModal.classList.add("active");
+
+});
+
+// =====================================
+// BOUTON MODIFIER
+// =====================================
+
+tableBody.addEventListener("click", event => {
+
+    const button = event.target.closest(".organizer-edit-button");
+
+    if (!button) return;
+
+    const organizer = organizers.find(
+        item => item.id === button.dataset.id
     );
+
+    if (!organizer) return;
+
+    // Préremplir les champs
+    editOrganizerId.value = organizer.id;
+    editOrganizerName.value = organizer.full_name || "";
+    editOrganizerEmail.value = organizer.email || "";
+
+    // Réinitialiser le message
+    editOrganizerMessage.textContent = "";
+
+    // Ouvrir la fenêtre
+    editOrganizerModal.classList.add("active");
+
+});
+
+// =====================================
+// FERMETURE DE LA FENÊTRE DE MODIFICATION
+// =====================================
+
+function closeEditOrganizerModal() {
+    editOrganizerModal.classList.remove("active");
+    editOrganizerForm.reset();
+    editOrganizerMessage.textContent = "";
+}
+
+editOrganizerClose.addEventListener("click", closeEditOrganizerModal);
+
+editOrganizerCancel.addEventListener("click", closeEditOrganizerModal);
+
+editOrganizerModal.addEventListener("click", event => {
+    if (event.target === editOrganizerModal) {
+        closeEditOrganizerModal();
+    }
+});
+
+// =====================================
+// ENREGISTRER LES MODIFICATIONS
+// =====================================
+
+editOrganizerForm.addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    const organizerId = editOrganizerId.value;
+    const fullName = editOrganizerName.value.trim();
+    const newEmail = editOrganizerEmail.value.trim().toLowerCase();
+
+    const organizer = organizers.find(
+        item => item.id === organizerId
+    );
+
+    if (!organizer) {
+        editOrganizerMessage.textContent = "Organisateur introuvable.";
+        return;
+    }
+
+    if (fullName.length < 2 || fullName.length > 100) {
+        editOrganizerMessage.textContent =
+            "Le nom doit contenir entre 2 et 100 caractères.";
+        return;
+    }
+
+    const emailChanged =
+        newEmail !== (organizer.email || "").trim().toLowerCase();
+
+    // Pour le moment, on bloque le changement d'e-mail.
+    // Il sera activé avec la confirmation par e-mail.
+    if (emailChanged) {
+  const saveButton = document.getElementById("edit-organizer-save");
+
+  saveButton.disabled = true;
+  saveButton.textContent = "Enregistrement...";
+
+  try {
+    const result = await callOrganizerFunction(
+      "request-email-change",
+      {
+        organizer_id: organizerId,
+        new_email: newEmail
+      }
+    );
+
+    editOrganizerMessage.style.color = "#168344";
+    editOrganizerMessage.textContent =
+      result.message || "Nouvelle adresse enregistrée.";
+
+    await loadOrganizers();
+
+    setTimeout(() => closeEditOrganizerModal(), 2000);
+
+  } catch (error) {
+    editOrganizerMessage.style.color = "#c62828";
+    editOrganizerMessage.textContent =
+      error.message || "Impossible d'enregistrer la nouvelle adresse.";
+
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = "Enregistrer";
+  }
+
+  return;
+}
+
+    const saveButton = document.getElementById("edit-organizer-save");
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Enregistrement...";
+
+    try {
+
+        const result = await callOrganizerFunction("update-name", {
+            organizer_id: organizerId,
+            full_name: fullName
+        });
+
+        editOrganizerMessage.style.color = "#168344";
+        editOrganizerMessage.textContent =
+            result.message || "Nom modifié avec succès.";
+
+        await loadOrganizers();
+
+        setTimeout(() => {
+            closeEditOrganizerModal();
+        }, 1200);
+
+    } catch (error) {
+
+        console.error("Erreur modification organisateur :", error);
+
+        editOrganizerMessage.style.color = "#c62828";
+        editOrganizerMessage.textContent = error.message;
+
+    } finally {
+
+        saveButton.disabled = false;
+        saveButton.textContent = "Enregistrer";
+
+    }
+
+});
+
+// =====================================
+// SUSPENDRE / REACTIVER UN ORGANISATEUR
+// =====================================
+
+tableBody.addEventListener("click", async event => {
+
+    const button = event.target.closest(".organizer-toggle-button");
+
+    if (!button) return;
+
+    const organizerId = button.dataset.id;
+    const action = button.dataset.action;
+
+    const organizer = organizers.find(
+        item => item.id === organizerId
+    );
+
+    if (!organizer) return;
+
+    const isSuspending = action === "suspend";
+
+    const confirmationMessage = isSuspending
+        ? `Voulez-vous vraiment suspendre le compte de ${organizer.full_name} ?`
+        : `Voulez-vous réactiver le compte de ${organizer.full_name} ?`;
+
+    const confirmed = await openConfirmModal(
+        confirmationMessage,
+        isSuspending ? "Suspendre le compte" : "Réactiver le compte"
+    );
+
+    if (!confirmed) return;
+
+    button.disabled = true;
+    button.textContent = "Traitement...";
+
+    try {
+
+        const result = await callOrganizerFunction(action, {
+            organizer_id: organizerId
+        });
+
+        organizersMessage.style.color = "#168344";
+        organizersMessage.textContent =
+            result.message || "Opération effectuée avec succès.";
+
+        await loadOrganizers();
+
+    } catch (error) {
+
+        console.error("Erreur modification organisateur :", error);
+
+        organizersMessage.style.color = "#c62828";
+        organizersMessage.textContent = error.message;
+
+        button.disabled = false;
+        button.textContent = isSuspending ? "Suspendre" : "Réactiver";
+
+    }
 
 });
 
 // =====================================
 // CREATION D'UN ORGANISATEUR
 // =====================================
-
-const organizerForm = document.getElementById("organizer-form");
-const addButton = document.getElementById("add-organizer-button");
 
 organizerForm.addEventListener("submit", async (event) => {
 
@@ -287,8 +632,9 @@ organizerForm.addEventListener("submit", async (event) => {
         return;
     }
 
-    const confirmed = confirm(
-        `Envoyer une invitation à ${fullName} (${email}) ?`
+    const confirmed = await openConfirmModal(
+        `Envoyer une invitation à ${fullName} (${email}) ?`,
+        "Envoyer l'invitation"
     );
 
     if (!confirmed) return;
@@ -338,14 +684,17 @@ const logoutButton = document.getElementById("logout-button");
 
 logoutButton?.addEventListener("click", async () => {
 
-    const confirmed = confirm("Voulez-vous vraiment vous déconnecter ?");
+    const confirmed = await openConfirmModal(
+        "Voulez-vous vraiment vous déconnecter ?",
+        "Me déconnecter"
+    );
 
     if (!confirmed) return;
 
     const { error } = await client.auth.signOut();
 
     if (error) {
-        alert("Erreur lors de la déconnexion.");
+        organizersMessage.textContent = "Erreur lors de la déconnexion.";
         return;
     }
 
@@ -353,7 +702,10 @@ logoutButton?.addEventListener("click", async () => {
 
 });
 
-// Chargement initial
+// =====================================
+// CHARGEMENT INITIAL
+// =====================================
+
 await loadOrganizers();
 
 });

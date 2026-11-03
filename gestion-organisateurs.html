@@ -236,5 +236,141 @@
     <script src="js/sidebar.js"></script>
     <script src="js/gestion-organisateurs.js"></script>
 
+<!-- MODALE DE CONFIRMATION -->
+<div class="custom-modal-overlay" id="confirm-modal">
+    <div class="custom-modal">
+        <div class="modal-icon">✉</div>
+
+        <h2>Confirmer l'invitation</h2>
+
+        <p id="confirm-modal-message">
+            Voulez-vous envoyer cette invitation ?
+        </p>
+
+        <div class="modal-actions">
+            <button type="button" class="modal-btn modal-cancel"
+                    id="confirm-cancel">
+                Annuler
+            </button>
+
+            <button type="button" class="modal-btn modal-primary"
+                    id="confirm-accept">
+                Envoyer l'invitation
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODALE DES INFORMATIONS -->
+<div class="custom-modal-overlay" id="details-modal">
+    <div class="custom-modal">
+        <button type="button" class="modal-close"
+                id="details-close">&times;</button>
+
+        <div class="modal-icon">👤</div>
+
+        <h2>Informations de l'organisateur</h2>
+
+        <div class="organizer-details">
+            <p><strong>Nom complet :</strong>
+                <span id="detail-name"></span>
+            </p>
+
+            <p><strong>E-mail :</strong>
+                <span id="detail-email"></span>
+            </p>
+
+            <p><strong>Statut :</strong>
+                <span id="detail-status"></span>
+            </p>
+
+            <p><strong>Date de création :</strong>
+                <span id="detail-date"></span>
+            </p>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="modal-btn modal-primary"
+                    id="details-ok">
+                Fermer
+            </button>
+        </div>
+    </div>
+</div>
+
+        <!-- MODALE DE MODIFICATION D'UN ORGANISATEUR -->
+<<div class="custom-modal-overlay" id="edit-organizer-modal">
+
+    <div class="custom-modal">
+
+        <div class="modal-header">
+            <h2>Modifier l'organisateur</h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="edit-organizer-close">
+                &times;
+            </button>
+        </div>
+
+        <form id="edit-organizer-form">
+
+            <input type="hidden" id="edit-organizer-id">
+
+            <div class="form-group">
+                <label for="edit-organizer-name">Nom complet</label>
+
+                <input
+                    type="text"
+                    id="edit-organizer-name"
+                    required
+                    minlength="2"
+                    maxlength="100"
+                    placeholder="Nom complet de l'organisateur">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-organizer-email">Adresse e-mail</label>
+
+                <input
+                    type="email"
+                    id="edit-organizer-email"
+                    required
+                    placeholder="Adresse e-mail">
+            </div>
+
+            <div class="modal-notice">
+                <strong>Attention :</strong>
+                toute modification de l'adresse e-mail nécessitera
+                une confirmation par e-mail avant sa prise en compte.
+            </div>
+
+            <div id="edit-organizer-message"></div>
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="modal-cancel-button"
+                    id="edit-organizer-cancel">
+                    Annuler
+                </button>
+
+                <button
+                    type="submit"
+                    class="modal-confirm-button"
+                    id="edit-organizer-save">
+                    Enregistrer
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
 </body>
 </html>
