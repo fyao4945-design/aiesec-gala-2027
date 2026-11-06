@@ -3,7 +3,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     const message = document.getElementById("dashboard-message");
     const logoutButton = document.getElementById("logout-button");
     const chartMessage = document.getElementById("chart-message");
+    const pendingEmailSection = document.getElementById(
+    "pending-email-section"
+);
 
+const pendingEmailMessage = document.getElementById(
+    "pending-email-message"
+);
+
+const confirmEmailChangeButton = document.getElementById(
+    "confirm-email-change-button"
+);
+
+const pendingEmailFeedback = document.getElementById(
+    "pending-email-feedback"
+);
     let invitationsChart = null;
 
     function showMessage(text, type = "") {
@@ -132,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Vérification du profil
         const { data: profile, error: profileError } = await client
             .from("profiles")
-            .select("full_name, role, is_active")
+            .select("full_name, role, is_active, pending_email")
             .eq("id", session.user.id)
             .maybeSingle();
 
@@ -147,6 +161,70 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "connexion.html";
             return;
         }
+
+        // Afficher le changement d'e-mail en attente
+        if (profile.pending_email) {
+            pendingEmailSection.style.display = "block";
+
+            pendingEmailMessage.textContent =
+            `Une modification de votre adresse e-mail est en attente. ` +
+            `Nouvelle adresse : ${profile.pending_email}`;
+        }
+
+                    // Demander la confirmation du changement d'e-mail
+confirmEmailChangeButton.addEventListener("click", async () => {
+
+    const pendingEmail = profile.pending_email;
+
+    if (!pendingEmail) {
+        pendingEmailFeedback.textContent =
+            "Aucun changement d'adresse e-mail en attente.";
+
+        return;
+    }
+
+    confirmEmailChangeButton.disabled = true;
+
+    confirmEmailChangeButton.textContent =
+        "Envoi en cours...";
+
+    pendingEmailFeedback.style.color = "#374151";
+
+    try {
+
+        const { data, error } = await client.auth.updateUser({
+            email: pendingEmail
+        });
+
+        if (error) throw error;
+
+        pendingEmailFeedback.style.color = "#168344";
+
+        pendingEmailFeedback.textContent =
+            "La demande a été envoyée. Consultez votre boîte e-mail " +
+            "pour confirmer le changement d'adresse.";
+
+    } catch (error) {
+
+        console.error(
+            "Erreur de changement d'e-mail :",
+            error
+        );
+
+        pendingEmailFeedback.style.color = "#c62828";
+
+        pendingEmailFeedback.textContent =
+            error.message ||
+            "Impossible d'envoyer le lien de confirmation.";
+
+    } finally {
+
+        confirmEmailChangeButton.disabled = false;
+
+        confirmEmailChangeButton.textContent =
+            "Renvoyer le lien de confirmation";
+    }
+    });
 
         showMessage(
             `Connecté en tant que ${profile.role === "admin"
