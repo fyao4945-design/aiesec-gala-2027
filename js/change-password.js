@@ -10,10 +10,54 @@ document.addEventListener("DOMContentLoaded", async () => {
     const button = document.getElementById("change-password-button");
     const logoutButton = document.getElementById("logout-button");
 
+    const currentPasswordInput = document.getElementById("current-password");
+    const newPasswordInput = document.getElementById("new-password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+
+    const currentPasswordLabel = document.querySelector(
+        'label[for="current-password"]'
+    );
+
+    let recoveryMode = new URLSearchParams(window.location.search)
+        .get("type") === "recovery";
+
+    let recoveryEventReceived = false;
+
     function showMessage(text, type = "") {
         message.textContent = text;
         message.className = "form-message" + (type ? ` ${type}` : "");
     }
+
+    function activateRecoveryMode() {
+
+        recoveryMode = true;
+
+        currentPasswordInput.required = false;
+        currentPasswordInput.style.display = "none";
+        currentPasswordLabel.style.display = "none";
+
+        button.textContent = "Réinitialiser mon mot de passe";
+
+        document.querySelector("h1").textContent =
+            "Réinitialiser mon mot de passe";
+
+        showMessage(
+            "Vérification réussie. Vous pouvez définir votre nouveau mot de passe.",
+            "success"
+        );
+    }
+
+    // Écouter les événements d'authentification Supabase
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+
+        if (event === "PASSWORD_RECOVERY") {
+
+            recoveryEventReceived = true;
+            activateRecoveryMode();
+
+        }
+
+    });
 
     // Vérification de la session
     try {
@@ -23,44 +67,63 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (error) throw error;
 
         if (!data.session) {
-            window.location.href = "connexion.html";
+
+            showMessage(
+                "Session absente ou expirée. Veuillez demander un nouveau lien de réinitialisation.",
+                "error"
+            );
+
+            form.style.display = "none";
             return;
+        }
+
+        if (recoveryMode || recoveryEventReceived) {
+
+            activateRecoveryMode();
+
+        } else {
+
+            showMessage(
+                "Session vérifiée. Vous pouvez modifier votre mot de passe.",
+                "success"
+            );
+
         }
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Erreur de session :", error);
 
         showMessage(
             "Impossible de vérifier votre session.",
             "error"
         );
 
+        form.style.display = "none";
         return;
     }
 
     // Déconnexion
-    logoutButton.addEventListener("click", async () => {
+    if (logoutButton) {
 
-        await supabaseClient.auth.signOut();
+        logoutButton.addEventListener("click", async () => {
 
-        window.location.href = "connexion.html";
+            await supabaseClient.auth.signOut();
 
-    });
+            window.location.href = "connexion.html";
 
-    // Changement du mot de passe
+        });
+
+    }
+
+    // Soumission du formulaire
     form.addEventListener("submit", async (event) => {
 
         event.preventDefault();
 
-        const currentPassword =
-            document.getElementById("current-password").value;
-
-        const newPassword =
-            document.getElementById("new-password").value;
-
-        const confirmPassword =
-            document.getElementById("confirm-password").value;
+        const currentPassword = currentPasswordInput.value;
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
 
         if (newPassword.length < 8) {
 
@@ -82,7 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        if (currentPassword === newPassword) {
+        if (!recoveryMode && currentPassword === newPassword) {
 
             showMessage(
                 "Le nouveau mot de passe doit être différent de l'ancien.",
@@ -93,34 +156,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         button.disabled = true;
-        button.textContent = "Modification en cours...";
+        button.textContent = "Enregistrement en cours...";
 
         try {
 
-            // Récupération de l'utilisateur connecté
+            // Vérifier l'utilisateur connecté
             const { data: userData, error: userError } =
                 await supabaseClient.auth.getUser();
 
             if (userError) throw userError;
 
-            const email = userData.user.email;
-
-            if (!email) {
-                throw new Error("Adresse e-mail introuvable.");
+            if (!userData.user) {
+                throw new Error("Utilisateur non authentifié.");
             }
 
             // Vérification de l'ancien mot de passe
-            const { error: loginError } =
-                await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: currentPassword
-                });
+            // Uniquement pour un changement classique
+            if (!recoveryMode) {
 
-            if (loginError) {
+                const email = userData.user.email;
 
-                throw new Error(
-                    "L'ancien mot de passe est incorrect."
-                );
+                const { error: loginError } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: currentPassword
+                    });
+
+                if (loginError) {
+
+                    throw new Error(
+                        "L'ancien mot de passe est incorrect."
+                    );
+
+                }
 
             }
 
@@ -133,11 +201,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (updateError) throw updateError;
 
             showMessage(
-                "Votre mot de passe a été modifié avec succès !",
+                "Votre mot de passe a été enregistré avec succès !",
                 "success"
             );
 
             form.reset();
+
+            button.textContent = "Mot de passe enregistré";
+
+            // Redirection après une réinitialisation
+            if (recoveryMode) {
+
+                setTimeout(async () => {
+
+                    await supabaseClient.auth.signOut();
+
+                    window.location.href = "connexion.html";
+
+                }, 3000);
+
+            }
 
         } catch (error) {
 
@@ -148,10 +231,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 "error"
             );
 
-        } finally {
-
             button.disabled = false;
-            button.textContent = "Modifier le mot de passe";
+            button.textContent = recoveryMode
+                ? "Réinitialiser mon mot de passe"
+                : "Modifier le mot de passe";
 
         }
 
