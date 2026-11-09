@@ -162,6 +162,15 @@ const pendingEmailFeedback = document.getElementById(
             return;
         }
 
+        // Afficher la gestion des organisateurs uniquement pour l'administrateur
+        const organizersMenuLink = document.getElementById(
+            "organizers-menu-link"
+        );
+
+        if (organizersMenuLink && profile.role === "admin") {
+            organizersMenuLink.style.display = "flex";
+        }
+
         // Afficher le changement d'e-mail en attente
         if (profile.pending_email) {
             pendingEmailSection.style.display = "block";
