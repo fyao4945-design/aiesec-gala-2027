@@ -39,6 +39,47 @@
         return String(value || "").trim();
     }
 
+    // Mettre le nom entièrement en majuscules
+function formatLastName(value) {
+    return normalizeText(value).toLocaleUpperCase("fr-FR");
+}
+
+// Mettre la première lettre de chaque prénom en majuscule
+function formatFirstNames(value) {
+    return normalizeText(value)
+        .toLocaleLowerCase("fr-FR")
+        .replace(/(^|[\s'-])(\p{L})/gu, (match, separator, letter) => {
+            return separator + letter.toLocaleUpperCase("fr-FR");
+        });
+}
+
+// Normaliser et vérifier un numéro ivoirien
+function formatIvorianPhone(value) {
+    const phone = normalizeText(value);
+
+    // Supprimer les espaces, tirets et points
+    const digits = phone.replace(/[\s.-]/g, "");
+
+    // Accepter les numéros avec ou sans indicatif +225
+    const nationalNumber = digits.startsWith("+225")
+        ? digits.substring(4)
+        : digits;
+
+    // Préfixes mobiles et fixes ivoiriens
+    const validPrefixes = ["01", "05", "07", "21", "25", "27"];
+
+    if (
+        !/^\d{10}$/.test(nationalNumber) ||
+        !validPrefixes.some(prefix => nationalNumber.startsWith(prefix))
+    ) {
+        throw new Error(
+            "Numéro invalide. Saisis un numéro ivoirien valide au format 07 12 34 56 78 ou +225 07 12 34 56 78."
+        );
+    }
+
+    return "+225" + nationalNumber;
+    }
+
     function makeInvitationNumber() {
         const date = new Date();
         const year = date.getFullYear();
@@ -128,12 +169,12 @@
     }
 
     function updatePreview() {
-        const lastName = normalizeText(
-            document.getElementById("last_name").value
+        const lastName = formatLastName(
+        document.getElementById("last_name").value
         );
 
-        const firstNames = normalizeText(
-            document.getElementById("first_names").value
+        const firstNames = formatFirstNames(
+         document.getElementById("first_names").value
         );
 
         const category = normalizeText(
@@ -199,11 +240,11 @@ function getVerificationURL(token) {
                 await loadEvent();
             }
 
-            const lastName = normalizeText(
+            const lastName = formatLastName(
                 document.getElementById("last_name").value
             );
 
-            const firstNames = normalizeText(
+            const firstNames = formatFirstNames(
                 document.getElementById("first_names").value
             );
 
@@ -219,17 +260,17 @@ function getVerificationURL(token) {
                 document.getElementById("job_title").value
             );
 
-            const phone = normalizeText(
-                document.getElementById("phone").value
+            const phone = formatIvorianPhone(
+             document.getElementById("phone").value
             );
 
             const email = normalizeText(
                 document.getElementById("email").value
             );
 
-            if (!lastName || !firstNames || !category) {
-                throw new Error(
-                    "Remplis le nom, les prénoms et la catégorie."
+            if (!lastName || !firstNames || !category || !phone) {
+                 throw new Error(
+                    "Remplis tous les champs obligatoires, notamment le téléphone."
                 );
             }
 

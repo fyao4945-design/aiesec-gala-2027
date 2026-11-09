@@ -5,7 +5,7 @@
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
-
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <title>Créer une invitation | AIESEC Gala 2027</title>
 
     <link rel="stylesheet" href="css/style.css">
@@ -286,21 +286,25 @@
                     name="job_title"
                     type="text"
                     maxlength="150"
-                    placeholder="Ex. : Responsable informatique"
+                    placeholder="Ex. : B2B"
                 >
 
                 <label for="phone">
-                    Téléphone
-                </label>
+    Téléphone *
+</label>
 
-                <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    maxlength="30"
-                    autocomplete="tel"
-                    placeholder="Numéro de téléphone"
-                >
+<input
+    id="phone"
+    name="phone"
+    type="tel"
+    maxlength="30"
+    autocomplete="tel"
+    inputmode="tel"
+    placeholder="Ex. : 07 12 34 56 78"
+    required
+>
+
+
 
                 <label for="email">
                     Adresse e-mail
