@@ -16,13 +16,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Un ou plusieurs éléments HTML sont introuvables.");
         return;
     }
-
+    //Remplacement temporaire
     const config = window.AIESEC_CONFIG || {};
 
-    if (!window.supabase || !config.SUPABASE_URL || !config.SUPABASE_ANON_KEY) {
-        message.textContent = "Configuration Supabase introuvable.";
-        return;
-    }
+console.log("DIAGNOSTIC SUPABASE");
+console.log("Bibliothèque Supabase :", window.supabase);
+console.log("Configuration :", window.AIESEC_CONFIG);
+console.log("URL :", config.SUPABASE_URL);
+console.log("Clé publique présente :", !!config.SUPABASE_ANON_KEY);
+
+if (!window.supabase || !config.SUPABASE_URL || !config.SUPABASE_ANON_KEY) {
+    message.style.color = "#dc2626";
+    message.textContent = "Configuration Supabase introuvable. Consultez la console.";
+    form.style.display = "none";
+    return;
+} //remplacement temporaire
 
     const client = window.supabase.createClient(
         config.SUPABASE_URL,
