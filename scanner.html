@@ -23,33 +23,48 @@
             <p>Contrôle des invitations</p>
         </header>
 
-        <section class="card" id="access-section">
-            <h2>Accès organisateur</h2>
+       <section class="card" id="access-section">
+         <h2>Connexion organisateur</h2>
 
-            <p>
-                Saisissez le code commun communiqué par
-                l'administrateur pour accéder au scanner.
-            </p>
+         <p>
+            Connectez-vous avec votre compte administrateur
+            ou organisateur pour accéder au scanner.
+         </p>
 
-            <form id="access-form">
-                <label for="scanner-code">Code organisateur</label>
+    <form id="access-form">
 
-                <input
-                    type="password"
-                    id="scanner-code"
-                    autocomplete="current-password"
-                    required
-                    placeholder="Entrez votre code"
-                >
+        <label for="scanner-email">
+            Adresse e-mail
+        </label>
 
-                <button type="submit" id="access-button">
-                    Accéder au scanner
-                </button>
-            </form>
+        <input
+            type="email"
+            id="scanner-email"
+            autocomplete="username"
+            required
+            placeholder="Votre adresse e-mail"
+        >
 
-            <p id="access-message" role="alert"></p>
-        </section>
+        <label for="scanner-password">
+            Mot de passe
+        </label>
 
+        <input
+            type="password"
+            id="scanner-password"
+            autocomplete="current-password"
+            required
+            placeholder="Votre mot de passe"
+        >
+
+        <button type="submit" id="access-button">
+            Se connecter
+        </button>
+
+     </form>
+
+        <p id="access-message" role="alert"></p>
+    </section>
         <section class="card" id="scanner-section" hidden>
             <h2>Scanner une invitation</h2>
 
