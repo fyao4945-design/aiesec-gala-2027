@@ -30,7 +30,8 @@ const actionLabels = {
     accepted: "Entrée autorisée",
     invalid: "Invitation invalide",
     already_used: "Déjà utilisée",
-    revoked: "Invitation révoquée"
+    revoked: "Invitation révoquée",
+    created: "Invitation créée"
 };
 
 // Icônes et couleurs
@@ -201,7 +202,7 @@ async function loadActivities() {
         if (error) throw error;
 
         allActivities = data || [];
-
+        console.log("Activités reçues par Supabase :", data);
 
         applyFilters();
 

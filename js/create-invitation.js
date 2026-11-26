@@ -7,7 +7,7 @@
     const message = document.getElementById("form-message");
     const createButton = document.getElementById("create-button");
     const downloadButton = document.getElementById("download-button");
-
+    const whatsappButton = document.getElementById("whatsapp-button");
     const previewName = document.getElementById("preview-name");
     const previewCategory = document.getElementById("preview-category");
     const previewNumber = document.getElementById("preview-number");
@@ -344,15 +344,16 @@ function getVerificationURL(token) {
 
             const verificationURL = getVerificationURL(token);
 
-            generatedInvitation = {
-                guestId,
-                invitationNumber,
-                token,
-                verificationURL,
-                lastName,
-                firstNames,
-                category
-            };
+                generatedInvitation = {
+                    guestId,
+                    invitationNumber,
+                    token,
+                    verificationURL,
+                    lastName,
+                    firstNames,
+                    category,
+                    phone
+                };
 
             previewNumber.textContent =
                 "N° " + invitationNumber;
@@ -360,6 +361,7 @@ function getVerificationURL(token) {
             drawQR(verificationURL);
 
             downloadButton.disabled = false;
+            whatsappButton.disabled = false;
 
             showMessage(
                 "Invitation enregistrée avec succès. Tu peux maintenant télécharger la carte.",
@@ -409,6 +411,39 @@ function getVerificationURL(token) {
             showMessage("Crée d'abord une invitation.");
             return;
         }
+
+       function shareWhatsApp() {
+    if (!generatedInvitation) {
+        alert("Veuillez d'abord créer une invitation.");
+        return;
+    }
+
+    let phone = generatedInvitation.phone.replace(/\D/g, "");
+
+    // Ajouter l'indicatif de la Côte d'Ivoire si nécessaire
+    if (phone.startsWith("0")) {
+        phone = "225" + phone.substring(1);
+    } else if (!phone.startsWith("225")) {
+        phone = "225" + phone;
+    }
+
+    const message =
+        "Bonjour " + generatedInvitation.firstNames + ",\n\n" +
+        "Voici ton invitation pour le Dîner de Gala AIESEC 2027.\n\n" +
+        "Numéro d'invitation : " +
+        generatedInvitation.invitationNumber + "\n\n" +
+        "Lien de vérification :\n" +
+        generatedInvitation.verificationURL + "\n\n" +
+        "Nous avons hâte de te retrouver !";
+
+    const whatsappURL =
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(message);
+
+    window.open(whatsappURL, "_blank");
+}
 
         if (!window.html2canvas) {
             showMessage("Le module de génération PNG est indisponible.");
@@ -482,6 +517,7 @@ function getVerificationURL(token) {
         form.addEventListener("submit", createInvitation);
 
         downloadButton.addEventListener("click", downloadPNG);
+        whatsappButton.addEventListener("click", shareWhatsApp);
 
         [
             "last_name",
