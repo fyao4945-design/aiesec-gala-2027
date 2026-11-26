@@ -15,6 +15,44 @@
 
     let supabaseClient = null;
     let generatedInvitation = null;
+
+    function shareWhatsApp() {
+    if (!generatedInvitation) {
+        alert("Veuillez d'abord créer une invitation.");
+        return;
+    }
+
+    if (!generatedInvitation.phone) {
+        alert("Aucun numéro de téléphone n'est enregistré.");
+        return;
+    }
+
+    let phone = generatedInvitation.phone.replace(/\D/g, "");
+
+    if (phone.startsWith("0")) {
+        phone = "225" + phone.substring(1);
+    } else if (!phone.startsWith("225")) {
+        phone = "225" + phone;
+    }
+
+    const whatsappMessage =
+        "Bonjour " + generatedInvitation.firstNames + ",\n\n" +
+        "Voici ton invitation pour le Dîner de Gala AIESEC 2027.\n\n" +
+        "Numéro d'invitation : " +
+        generatedInvitation.invitationNumber + "\n\n" +
+        "Lien de vérification :\n" +
+        generatedInvitation.verificationURL + "\n\n" +
+        "Nous avons hâte de te retrouver !";
+
+    const whatsappURL =
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(whatsappMessage);
+
+    window.open(whatsappURL, "_blank");
+}
+
     let activeEvent = null;
 
     function showMessage(text, success = false) {
@@ -412,38 +450,7 @@ function getVerificationURL(token) {
             return;
         }
 
-       function shareWhatsApp() {
-    if (!generatedInvitation) {
-        alert("Veuillez d'abord créer une invitation.");
-        return;
-    }
-
-    let phone = generatedInvitation.phone.replace(/\D/g, "");
-
-    // Ajouter l'indicatif de la Côte d'Ivoire si nécessaire
-    if (phone.startsWith("0")) {
-        phone = "225" + phone.substring(1);
-    } else if (!phone.startsWith("225")) {
-        phone = "225" + phone;
-    }
-
-    const message =
-        "Bonjour " + generatedInvitation.firstNames + ",\n\n" +
-        "Voici ton invitation pour le Dîner de Gala AIESEC 2027.\n\n" +
-        "Numéro d'invitation : " +
-        generatedInvitation.invitationNumber + "\n\n" +
-        "Lien de vérification :\n" +
-        generatedInvitation.verificationURL + "\n\n" +
-        "Nous avons hâte de te retrouver !";
-
-    const whatsappURL =
-        "https://wa.me/" +
-        phone +
-        "?text=" +
-        encodeURIComponent(message);
-
-    window.open(whatsappURL, "_blank");
-}
+      
 
         if (!window.html2canvas) {
             showMessage("Le module de génération PNG est indisponible.");
@@ -488,7 +495,13 @@ function getVerificationURL(token) {
         }
     }
 
+    
+
+
     async function initialize() {
+
+        
+
         if (
             !config ||
             !config.SUPABASE_URL ||
