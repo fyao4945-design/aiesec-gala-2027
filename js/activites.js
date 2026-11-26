@@ -24,7 +24,6 @@ const pageMessage = document.getElementById("page-message");
 
 let allActivities = [];
 let filteredActivities = [];
-let organizerNames = {};
 
 // Libellés des opérations
 const actionLabels = {
@@ -113,11 +112,7 @@ function getParticipant(activity) {
 
 // Organisateur
 function getOrganizer(activity) {
-    if (!activity.organizer_id) {
-        return "Organisateur non identifié";
-    }
-
-    return organizerNames[activity.organizer_id]
+    return activity.organizer?.full_name
         || "Organisateur non identifié";
 }
 
@@ -166,6 +161,7 @@ async function loadActivities() {
         // 3. Récupérer les journaux
         let query = supabaseClient
             .from("entry_logs")
+            
             .select(`
                 id,
                 invitation_id,
@@ -173,6 +169,9 @@ async function loadActivities() {
                 action,
                 scanned_at,
                 note,
+                organizer:profiles!entry_logs_organizer_id_fkey (
+                    full_name
+                ),
                 invitation:invitations (
                     invitation_number,
                     guest:guests (
@@ -203,32 +202,6 @@ async function loadActivities() {
 
         allActivities = data || [];
 
-        // 4. Récupérer les organisateurs
-        const organizerIds = [
-            ...new Set(
-                allActivities
-                    .map(activity => activity.organizer_id)
-                    .filter(Boolean)
-            )
-        ];
-
-        organizerNames = {};
-
-        if (organizerIds.length > 0) {
-
-            const { data: profiles, error: profilesError } =
-                await supabaseClient
-                    .from("profiles")
-                    .select("id, full_name")
-                    .in("id", organizerIds);
-
-            if (profilesError) throw profilesError;
-
-            (profiles || []).forEach(profile => {
-                organizerNames[profile.id] =
-                    profile.full_name || "Nom non renseigné";
-            });
-        }
 
         applyFilters();
 
