@@ -444,56 +444,87 @@ function getVerificationURL(token) {
         }
     }
 
-    async function downloadPNG() {
-        if (!generatedInvitation) {
-            showMessage("Crée d'abord une invitation.");
-            return;
+  async function downloadPNG() {
+    if (!generatedInvitation) {
+        showMessage("Crée d'abord une invitation.");
+        return;
+    }
+
+    if (!window.html2canvas) {
+        showMessage("Le module de génération PNG est indisponible.");
+        return;
+    }
+
+    downloadButton.disabled = true;
+
+    try {
+        const card = document.getElementById("invitation-card");
+
+        const canvas = await html2canvas(card, {
+            scale: 3,
+            backgroundColor: "#ffffff",
+            useCORS: true,
+            logging: false
+        });
+
+        // Générer le fichier PNG
+        const blob = await new Promise(resolve => {
+            canvas.toBlob(resolve, "image/png");
+        });
+
+        if (!blob) {
+            throw new Error("Impossible de générer le fichier PNG.");
         }
 
-      
+        // Nom du fichier
+        const fileName =
+            generatedInvitation.invitationNumber + ".png";
 
-        if (!window.html2canvas) {
-            showMessage("Le module de génération PNG est indisponible.");
-            return;
-        }
-
-        downloadButton.disabled = true;
-
-        try {
-            const card = document.getElementById("invitation-card");
-
-            const canvas = await html2canvas(card, {
-                scale: 3,
-                backgroundColor: "#ffffff",
-                useCORS: true,
-                logging: false
+        // Enregistrer dans Supabase Storage
+        const { data, error } = await supabaseClient
+            .storage
+            .from("invitations-png")
+            .upload(fileName, blob, {
+                contentType: "image/png",
+                upsert: true
             });
 
-            const link = document.createElement("a");
-
-            link.download =
-                generatedInvitation.invitationNumber + ".png";
-
-            link.href = canvas.toDataURL("image/png");
-
-            link.click();
-
-            showMessage(
-                "La carte PNG a été téléchargée.",
-                true
-            );
-
-        } catch (error) {
-            console.error("Téléchargement PNG :", error);
-
-            showMessage(
-                "Impossible de générer le PNG. Vérifie le chargement du logo et des bibliothèques."
-            );
-
-        } finally {
-            downloadButton.disabled = false;
+        if (error) {
+            throw error;
         }
+
+        // Récupérer le lien public
+        const { data: publicData } = supabaseClient
+            .storage
+            .from("invitations-png")
+            .getPublicUrl(fileName);
+
+        generatedInvitation.pngURL = publicData.publicUrl;
+
+        // Télécharger également sur l'ordinateur
+        const link = document.createElement("a");
+
+        link.download = fileName;
+        link.href = canvas.toDataURL("image/png");
+
+        link.click();
+
+        showMessage(
+            "Carte PNG téléchargée et enregistrée avec succès.",
+            true
+        );
+
+    } catch (error) {
+        console.error("Enregistrement PNG :", error);
+
+        showMessage(
+            "Erreur lors de l'enregistrement PNG : " + error.message
+        );
+
+    } finally {
+        downloadButton.disabled = false;
     }
+}
 
     
 
