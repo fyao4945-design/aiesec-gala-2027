@@ -27,6 +27,11 @@
         return;
     }
 
+    if (!generatedInvitation.pngURL) {
+        alert("Veuillez d'abord télécharger la carte PNG.");
+        return;
+    }
+
     let phone = generatedInvitation.phone.replace(/\D/g, "");
 
     if (phone.startsWith("0")) {
@@ -40,7 +45,9 @@
         "Voici ton invitation pour le Dîner de Gala AIESEC 2027.\n\n" +
         "Numéro d'invitation : " +
         generatedInvitation.invitationNumber + "\n\n" +
-        "Lien de vérification :\n" +
+        "Télécharger ta carte d'invitation (PNG) :\n" +
+        generatedInvitation.pngURL + "\n\n" +
+        "Lien de vérification de ton invitation :\n" +
         generatedInvitation.verificationURL + "\n\n" +
         "Nous avons hâte de te retrouver !";
 
